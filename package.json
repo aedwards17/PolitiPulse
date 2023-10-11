@@ -12,6 +12,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "firebase-admin": "^11.11.0",
     "react-icons": "^4.11.0",
     "react-router-dom": "^6.16.0",
     "styled-components": "^6.0.8"
