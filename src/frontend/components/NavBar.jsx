@@ -3,6 +3,12 @@ export default function NavBar() {
     <nav className="nav">
     <ul>
       <li>
+          <div class="dropDown">
+            <button class="dropbtn">Dropdown</button>
+            <div class="dropDownContent">
+              
+          </div>
+          </div>
           <a href="/home">Home</a>
       </li>
       <li>
