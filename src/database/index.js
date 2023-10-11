@@ -4,7 +4,7 @@ var serviceAccount = require("./key.json");
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
-  databaseURL: "https://politipulse.firebaseio.com"
+  databaseURL: "https://politipulse-default-rtdb.firebaseio.com"
 });
 
 const db = admin.firestore();
