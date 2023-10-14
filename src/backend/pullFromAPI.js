@@ -1,11 +1,10 @@
+/*
 const axios = require('axios');
-const admin = require('firebase-admin');
-const serviceAccount = require('./key.json');
 
 const apiKey = process.env['API_KEY'];
-const apiUrl = 'https://api.propublica.org/congress/v1';
+const apiUrl = 'https://api.propublica.org/congress/v1/118/bills/hr680.json';
 
-axios.get(`${apiUrl}/bills/search.json?query=2023`, {
+axios.get(`${apiUrl}`, {
     headers: {
         'X-API-Key': apiKey,
     },
@@ -20,21 +19,72 @@ axios.get(`${apiUrl}/bills/search.json?query=2023`, {
     });
 
 function displayData(data) {
+    try {
+        if (data.results) {
+            const bill = data.results[0];
+            if (bill) {
+                console.log(bill)
+                console.log('--------------------------------------');
+            } else {
+                console.log('No bill found for this query.');
+            }
+        } else {
+            console.log('No results found for the query.');
+        }
+    } catch (error) {
+        console.error('Error displaying bill data:', error.message);
+    }
+}
+*/
+const axios = require('axios');
+const admin = require('firebase-admin');
+const fbKey = process.env['FB_KEY'];
+const serviceAccount = fbKey;
+
+const apiKey = process.env['API_KEY'];
+const apiUrl = 'https://api.propublica.org/congress/v1';
+
+const congress = 117; // 105-117
+const chamber = 'both'; // house, senate, or both
+const type = 'active'; // introduced, updated, active, passed, enacted, or vetoed
+
+axios.get(`${apiUrl}/${congress}/${chamber}/bills/${type}.json`, {
+    headers: {
+        'X-API-Key': apiKey,
+    },
+  })
+    .then(response => {
+        // Handle the API data here
+        const data = response.data;
+        displayData(data);
+    })
+    .catch(error => {
+        console.error('Error fetching data:', error.message);
+    });
+
+function getBill(url){
+  axios.get(`${url}`, {
+    headers: {
+        'X-API-Key': apiKey,
+    },
+  })
+  .then(response => {
+      // Handle the API data here
+      const data = response.data.results[0].versions[0].url;
+      console.log('Full Bill:', data);
+  })
+  .catch(error => {
+      console.error('Error fetching data:', error.message);
+  });
+}
+function displayData(data) {
     if (data.results) {
         const bills = data.results[0].bills;
 
         bills.forEach(bill => {
-            console.log('Bill ID:', bill.bill_id);
-            console.log('Bill Title:', bill.title);
-            console.log('Description:', bill.summary_short);
-            console.log('URL:', bill.bill_uri);
-            console.log('Date:', bill.introduced_date);
-            console.log('Active:', bill.active);
-            console.log('House Passage:', bill.house_passage);
-            console.log('Senate Passage:', bill.senate_passage);
-            console.log('Enacted:', bill.enacted);
-            console.log('Vetoed:', bill.vetoed);
-            console.log('--------------------------------------');
+            console.log(bill);
+            getBill(bill.bill_uri);
+      console.log('--------------------------------------');
         });
     } else {
         console.log('No results found for the query.');
