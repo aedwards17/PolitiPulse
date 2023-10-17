@@ -20,16 +20,17 @@ const apiKey = process.env['API_KEY'];
 const apiUrl = 'https://api.propublica.org/congress/v1';
 
 // Define parameters for the ProPublica API request
-const congress = 117; // 105-117
-const chamber = 'both'; // house, senate, or both
-const type = 'active'; // introduced, updated, active, passed, enacted or vetoed
+const congress = 117;
+const chamber = 'both';
+const type = 'active';
 
 // Define an asynchronous function to fetch and push data to Firestore
-async function fetchAndPushData() {
+
+async function fetchAndPushData(offset) {
   try {
     // Make an HTTP request to the ProPublica API to fetch bill data
-    // "?offset=value" can be added to the end of the URL to page through the results
-    const response = await axios.get(`${apiUrl}/${congress}/${chamber}/bills/${type}.json`, {
+    // ?offset=value can be added to the end of the URL to page through the results
+    const response = await axios.get(`${apiUrl}/${congress}/${chamber}/bills/${type}.json?offset=${offset}`, {
       headers: {
         'X-API-Key': apiKey,
       },
@@ -47,16 +48,16 @@ async function fetchAndPushData() {
         // Get a reference to the Firestore document and set its data
         const docRef = db.collection('bills').doc(bill.bill_id);
         await docRef.set({
-          bill_number: bill.number,
-          bill_title: bill.short_title,
-          bill_description: bill.title,
-          bill_date: bill.introduced_date,
-          bill_status: bill.active ? "Active" : "Not Active",
-          latest_major_action: bill.latest_major_action,
-          latest_major_action_date: bill.latest_major_action_date,
-          bill_summary: bill.summary,
-          bill_short_summary: bill.short_summary,
-          bill_url: bill_url,
+          bill_number: bill.number !== undefined ? bill.number : null,
+          bill_title: bill.short_title !== undefined ? bill.short_title : null,
+          bill_description: bill.title !== undefined ? bill.title : null,
+          bill_date: bill.introduced_date !== undefined ? bill.introduced_date : null,
+          bill_status: bill.active !== undefined ? (bill.active ? "Active" : "Not Active") : null,
+          latest_major_action: bill.latest_major_action !== undefined ? bill.latest_major_action : null,
+          latest_major_action_date: bill.latest_major_action_date !== undefined ? bill.latest_major_action_date : null,
+          bill_summary: bill.summary !== undefined ? bill.summary : null,
+          bill_short_summary: bill.summary_short !== undefined ? bill.summary_short : null,
+          bill_url: bill_url !== undefined ? bill_url : null,
         });
       }
     } else {
@@ -87,4 +88,10 @@ async function getBillUrl(bill_id, url) {
 }
 
 // Call the main function to start the data fetching and storing process
-fetchAndPushData();
+for (var i = 0; i < 100; i += 20) {
+  console.log(i);
+  fetchAndPushData(i);
+}
+db.collection("bills").get().then(function(querySnapshot) {      
+    console.log(querySnapshot.size); 
+});
