@@ -16,6 +16,28 @@ export default function NavBar() {
               </div>  
             </div>
         </li>
+        <li>
+            <div className="dropdown">
+              <a href="/Senate">Senate</a>
+              <div className="dropdown-content">
+                <Clink to="/SCE">Current Elected</Clink>
+                <Clink to="/SE">Elction</Clink>
+                <Clink to="/SRB">Senate Recent Business</Clink>
+                <Clink to="/SUB">Senate Upcoming Business </Clink>
+              </div>  
+            </div>
+        </li>
+        <li>
+            <div className="dropdown">
+              <a href="/User">User</a>
+              <div className="dropdown-content">
+                <Clink to="/UserProfile">Profile</Clink>
+                <Clink to="/About">About</Clink>
+                <Clink to="/Login">Login</Clink>
+                <Clink to="/Register">Register</Clink>
+              </div>  
+            </div>
+        </li>
       </ul>
   </nav>
   )
