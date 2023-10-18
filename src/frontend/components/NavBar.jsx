@@ -1,46 +1,35 @@
-import { Outlet, Link } from "react-router-dom";
+import {Link, useMatch, useResolvedPath} from "react-router-dom"
 
 export default function NavBar() {
   return (
     <nav className="nav">
-    <ul>
-      <li>
-          <a hre="/home">Home</a>
-      </li>
-      <li>
-          <div className="dropdown">
-            <a href="/House">House</a>
-            <div className="dropdown-content">
-              <a href="#">Current Elected</a>
-              <a href="#">Elction</a>
-              <a href="#">Recent Buisness</a>
-              <a href="#">Upcoming Buisness</a>
-            </div>  
-          </div>
-      </li>
-      <li>
-          <div className="dropdown">
-          <a href="/House">Senate</a>
-          <div className="dropdown-content">
-            <a href="#">Current Elected</a>
-            <a href="#">Elction</a>
-            <a href="#">Recent Buisness</a>
-            <a href="#">Upcoming Buisness</a>
-          </div>  
-        </div>
-      </li>
-      <li>
-        <div className="dropdown">
-          <a href="/House">User</a>
-          <div className="dropdown-content">
-            <a href="#">About</a>
-            <a href="#">Login</a>
-            <a href="#">Political Compass</a>
-            <a href="#">Register</a>          
-          </div>  
-        </div>
-      </li>
-    </ul>
+      <ul>
+        <Clink to="/">Home</Clink>
+        <li>
+            <div className="dropdown">
+              <a href="/House">House</a>
+              <div className="dropdown-content">
+                <Clink to="/HCE">Current Elected</Clink>
+                <Clink to="/HE">Elction</Clink>
+                <Clink to="/HRB">House Recent Business</Clink>
+                <Clink to="/HUB">House Upcoming Business </Clink>
+              </div>  
+            </div>
+        </li>
+      </ul>
   </nav>
+  )
+}
+
+function Clink({to, children, ...props}) {
+  const resolvedPath = useResolvedPath(to)
+  const isActive = useMatch({path: resolvedPath.pathname, end: true})
+
+  return (
+    <li className={isActive ? "active" : ""}>
+      <Link to={to} {...props}>
+        {children}
+      </Link>
+    </li>  
   )
 }
