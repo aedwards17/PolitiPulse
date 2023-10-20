@@ -20,7 +20,7 @@ const apiKey = process.env['API_KEY'];
 const apiUrl = 'https://api.propublica.org/congress/v1';
 
 // Define parameters for the ProPublica API request
-const congress = 117; // 105-117
+const congress = 118; // 105-117
 const chamber = 'senate'; // senate or house
 
 // Define an asynchronous function to fetch and push data to Firestore
