@@ -62,3 +62,42 @@ body {
 .dropdown:hover .dropdown-content {
   display: block;
 }
+
+.Reg {
+  background-color: grey;
+  font-size: 28px;
+  width: 20%;
+  margin: 10px auto;
+}
+
+.form-control {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-control label {
+  display: block;
+  text-align: center;
+  width: 100%;
+  float: center;
+}
+
+.form-control input[type="text"] {
+  display: block;
+  text-align: center;
+  width: 100%;
+  padding: 5px;
+}
+.form-control input[type="password"] {
+  display: block;
+  text-align: center;
+  width: 100%;
+  padding: 5px;
+  border-bottom: 5px;
+}
+
+button {
+  display: block;
+  text-align: center;
+  padding: 5px 0px;
+}
