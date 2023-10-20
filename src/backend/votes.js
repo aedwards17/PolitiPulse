@@ -37,11 +37,13 @@ async function fetchAndPushData(offset) {
     const data = response.data;
 
     if (data.results) {
-      const votes = data.results;
-      console.log(votes.votes[1].roll_call);
-      console.log(votes.votes[1].bill.bill_id);
-      getMemberInfo(votes.votes[1].roll_call);
-
+      const votes = data.results.votes;
+      for (const vote of votes){
+        const docRef = db.collection('votes').doc(vote.roll_call.toString());
+        await docRef.set({
+          bill_id: vote.bill.bill_id,
+        });        
+      }
     } else {
       console.log('No results found for the query.');
     }
@@ -50,9 +52,10 @@ async function fetchAndPushData(offset) {
   }
 }
 
+/*
 async function getMemberInfo(roll_call_number){
   try {
-    const response = await axios.get(`https://api.propublica.org/congress/v1/${congress}/${chamber}/sessions/${session}/votes/${roll_call_number}.json`, {
+    const response = await axios.get(`https://api.propublica.org/congress/v1/${congress}/${chamber}/sessions/${session}/votes/R${roll_call_number}.json`, {
       headers: {
         'X-API-Key': apiKey,
       },
@@ -60,18 +63,23 @@ async function getMemberInfo(roll_call_number){
     const data = response.data;
 
     if (data.results) {
-      const positions = data.results.votes;
-      console.log(positions.vote.positions[0].member_id);
-      console.log(positions.vote.positions[0].name);
-      console.log(positions.vote.positions[0].vote_position);
-      console.log(positions.vote.positions[0].dw_nominate);
+      const positions = data.results.votes.vote.positions;
+      for (const position of positions){
+        const docRef = db.collection("votes").doc(roll_call_number));
+        await docRef.set({
+          member_id: position.member_id,
+          vote_position: position.vote_position);
+        });
+      }
     } else {
       console.error('Error fetching and pushing data1:', error.message);
     }
+
   } catch(error) {
     console.error('Error fetching and pushing data2:', error.message);
   }
 }
+*/
 //
 /*
 var offset = 100;
