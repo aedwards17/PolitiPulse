@@ -28,7 +28,6 @@ const session = 1; // 1 is for odd-numbered year, and 2 is for even-numbered yea
 // This function will fetch the roll_call number and bill id
 async function fetchAndPushData(offset) {
   try {
-    // Make an HTTP request to the ProPublica API to fetch member data
     const response = await axios.get(`https://api.propublica.org/congress/v1/${chamber}/votes/recent.json?offset=${offset}`, {
       headers: {
         'X-API-Key': apiKey,
@@ -38,11 +37,17 @@ async function fetchAndPushData(offset) {
 
     if (data.results) {
       const votes = data.results.votes;
-      for (const vote of votes){
+      const batch = db.batch();
+
+      for (const vote of votes) {
         const docRef = db.collection('votes').doc(vote.roll_call.toString());
+
+        // Check if vote.bill is defined, and set the field accordingly
+        const billId = vote.bill ? vote.bill.bill_id : null;
+
         await docRef.set({
-          bill_id: vote.bill.bill_id,
-        });        
+          bill_id: billId,
+        });
       }
     } else {
       console.log('No results found for the query.');
@@ -52,10 +57,10 @@ async function fetchAndPushData(offset) {
   }
 }
 
-/*
-async function getMemberInfo(roll_call_number){
+// Define an asynchronous function to fetch and push member information to Firestore
+async function getMemberInfo(roll_call_number) {
   try {
-    const response = await axios.get(`https://api.propublica.org/congress/v1/${congress}/${chamber}/sessions/${session}/votes/R${roll_call_number}.json`, {
+    const response = await axios.get(`https://api.propublica.org/congress/v1/${congress}/${chamber}/sessions/${session}/votes/${roll_call_number}.json`, {
       headers: {
         'X-API-Key': apiKey,
       },
@@ -64,32 +69,66 @@ async function getMemberInfo(roll_call_number){
 
     if (data.results) {
       const positions = data.results.votes.vote.positions;
-      for (const position of positions){
-        const docRef = db.collection("votes").doc(roll_call_number));
-        await docRef.set({
-          member_id: position.member_id,
-          vote_position: position.vote_position);
-        });
-      }
-    } else {
-      console.error('Error fetching and pushing data1:', error.message);
-    }
+      const batch = db.batch();
+      const memberRef = db.collection('votes').doc(roll_call_number);
 
-  } catch(error) {
-    console.error('Error fetching and pushing data2:', error.message);
+      positions.forEach((position) => {
+        const memberId = position.member_id;
+        const memberPosition = position.vote_position;
+
+        // Check if memberId is defined, and set the field accordingly
+        const memberData = { vote_position: memberPosition };
+        if (memberId) {
+          const positionRef = memberRef.collection('positions').doc(memberId);
+          batch.set(positionRef, memberData);
+        } else {
+          // If memberId is missing, set null to avoid overwriting existing data
+          batch.set(memberRef, { missing_member_id: null }, { merge: true });
+        }
+      });
+
+      // Commit the batch write
+      await batch.commit();
+    } else {
+      console.error('Error fetching data:', data.error.message);
+    }
+  } catch (error) {
+    console.error('Error fetching data:', error.message);
   }
 }
-*/
-//
-/*
-var offset = 100;
-for (var i = 0; i < offset; i += 20) {
-  fetchAndPushData(i);
+
+// Define the main function for orchestration
+async function main() {
+  const offset = 100; // Set your desired offset
+  const batchSize = 20; // Set the batch size
+
+  const promises = [];
+
+  // Fetch and push data in batches
+  for (let i = 0; i < offset; i += batchSize) {
+    promises.push(fetchAndPushData(i));
+  }
+
+  await Promise.all(promises);
+
+  // Retrieve the documents from Firestore and fetch member information
+  const collectionRef = db.collection('votes');
+
+  collectionRef.get()
+    .then((querySnapshot) => {
+      const memberPromises = [];
+
+      querySnapshot.forEach((doc) => {
+        console.log(`Document ID: ${doc.id}`, doc.data());
+        memberPromises.push(getMemberInfo(doc.id));
+      });
+
+      return Promise.all(memberPromises);
+    })
+    .catch((error) => {
+      console.error('Error getting documents', error);
+    });
 }
-*/
-fetchAndPushData(2);
-// results -> votes -> vote ->
-// roll_call
-// bill -> bill_id
-// positions -> member_id
-// vote_position
+
+// Call the main function to start the process
+main();

@@ -44,7 +44,7 @@ async function fetchAndPushData(offset) {
       for (const bill of bills) {
         // Fetch the bill URL using another function
         const bill_url = await getBillUrl(bill.bill_id, bill.bill_uri);
-
+https://politipulse.austinedwards5.repl.co
         // Get a reference to the Firestore document and set its data
         const docRef = db.collection('bills').doc(bill.bill_id);
         await docRef.set({
