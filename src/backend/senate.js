@@ -47,6 +47,7 @@ async function fetchAndPushData() {
           last_name: member.last_name,
           first_name: member.first_name,
           title: member.title,
+          congress: data.results[0].congress,
           state: member.state,
           party: member.party,
           dob: member.date_of_birth,
