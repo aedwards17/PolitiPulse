@@ -14,6 +14,7 @@ import About from './frontend/pages/user/About'
 import Login from './frontend/pages/user/Login'
 import Register from './frontend/pages/user/Register'
 import {Route, Routes} from "react-router-dom"
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 export default function App() {
   return (
