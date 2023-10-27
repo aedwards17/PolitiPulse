@@ -1,4 +1,4 @@
-import './App.css'
+//import './App.css'
 import NavBar from './frontend/components/NavBar'
 import Home from "./frontend/pages/house/Home"
 import HouseCE from './frontend/pages/house/HouseCurrentElected'
