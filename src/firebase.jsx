@@ -9,5 +9,5 @@ const firebaseConfig = {serviceAccount};
 // Initialize Firebase
 const app = firebase.initializeApp(firebaseConfig);
 const db = app.firestore();
-// test 3
+// test 4
 export { db };
