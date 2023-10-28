@@ -57,6 +57,7 @@ async function fetchAndPushData() {
           facebook_account: member.facebook_account,
           youtube_account: member.youtube_account,
           website: member.url,
+          next_election: member.next_election
         });
       }
     } else {

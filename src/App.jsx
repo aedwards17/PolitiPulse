@@ -14,29 +14,32 @@ import About from './frontend/pages/user/About'
 import Login from './frontend/pages/user/Login'
 import Register from './frontend/pages/user/Register'
 import {Route, Routes} from "react-router-dom"
+import {AuthProvider} from "./contexts/AuthContext"
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 export default function App() {
   return (
     <main>
-      <NavBar />
-      <div className = "container">
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/HCE" element={<HouseCE />} />
-          <Route path="/HE" element={<HouseE />} />
-          <Route path="/HRB" element={<HouseRB />} />
-          <Route path="/HUB" element={<HouseUB />} />
-          <Route path="/SCE" element={<SenateCE />} />
-          <Route path="/SE" element={<SenateE />} />
-          <Route path="/SRB" element={<SenateRB />} />
-          <Route path="/SUB" element={<SenateUB />} />
-          <Route path="/UserProfile" element={<UserProfile />} />
-          <Route path="/About" element={<About />} />
-          <Route path="/Login" element={<Login />} />
-          <Route path="/Register" element={<Register />} />
-        </Routes>
-      </div>
+      <AuthProvider>
+        <NavBar />
+        <div className = "container">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/HCE" element={<HouseCE />} />
+            <Route path="/HE" element={<HouseE />} />
+            <Route path="/HRB" element={<HouseRB />} />
+            <Route path="/HUB" element={<HouseUB />} />
+            <Route path="/SCE" element={<SenateCE />} />
+            <Route path="/SE" element={<SenateE />} />
+            <Route path="/SRB" element={<SenateRB />} />
+            <Route path="/SUB" element={<SenateUB />} />
+            <Route path="/UserProfile" element={<UserProfile />} />
+            <Route path="/About" element={<About />} />
+            <Route path="/Login" element={<Login />} />
+            <Route path="/Register" element={<Register />} />
+          </Routes>
+        </div>
+      </AuthProvider>
     </main>
   )
 }
