@@ -13,6 +13,8 @@ import UserProfile from './frontend/pages/user/Profile'
 import About from './frontend/pages/user/About'
 import Login from './frontend/pages/user/Login'
 import Register from './frontend/pages/user/Register'
+import HouseMembers from './frontend/components/HouseMembers'
+import SenateMembers from './frontend/components/SenateMembers'
 import {Route, Routes} from "react-router-dom"
 import {AuthProvider} from "./contexts/AuthContext"
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -37,6 +39,8 @@ export default function App() {
             <Route path="/About" element={<About />} />
             <Route path="/Login" element={<Login />} />
             <Route path="/Register" element={<Register />} />
+            <Route path="/HouseMembers" element={<HouseMembers />} />
+            <Route path="/SenateMembers" element={<SenateMembers />} />
           </Routes>
         </div>
       </AuthProvider>

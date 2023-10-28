@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { collection, query, where, getDocs, limit } from "firebase/firestore";
 import { db } from '../../../firebase';
 import { Card, Button } from "react-bootstrap";
+import { Link } from 'react-router-dom'; // Import Link for routing
 
 import avatarImage from '../../img/avatar.png'; // Import the image
 
@@ -17,7 +18,7 @@ export default function HouseCurrentElected() {
       // Firestore query to fetch House representatives with congress value 118 and limit the results to 5
       const q = query(collection(db, "house"), where("congress", "==", "118"), limit(5));
       const querySnapshot = await getDocs(q); // Execute the query
-      const newData = querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })); // Extract data from the query result
+      const newData = querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
       setHouse(newData); // Update the state with the fetched data
     } catch (error) {
       console.error("Error fetching data from Firestore:", error);
@@ -57,31 +58,32 @@ export default function HouseCurrentElected() {
   // Render the component with fetched data and pagination controls
   return (
     <div className="container">
-      <h1 className="text-center">House Representatives</h1> {/* Header */}
+      <h1 className="text-center">House Representatives</h1>
       <hr></hr>
       <div className="row">
-        {/* Map through and display paginated House representatives */}
         {paginatedHouse.map((house) => (
           <div key={house.id} className={`col-md-4 mb-4`}>
-            <Card>
-              <div className="d-flex justify-content-center" style={{ background: house.party === "D" ? "DarkBlue" : house.party === "R" ? "DarkRed" : "black" }}>
-                <Card.Img src={avatarImage} alt="Avatar" className="avatar" style={{ width: "20%" }} />
-              </div>
-              <Card.Body>
-                <Card.Title>Last name: {house.last_name}</Card.Title>
-                <Card.Title>First name: {house.first_name}</Card.Title>
-                <Card.Text>Party: {house.party}</Card.Text>
-                <Card.Text>State: {house.state}</Card.Text>
-                <Card.Text>District: {house.district}</Card.Text> {/* Displaying District information */}
-                <Card.Text>Congress: {house.congress}</Card.Text>
-              </Card.Body>
-            </Card>
+            <Link to={`/HouseMembers?houseId=${house.id}`} style={{ textDecoration: 'none', color: 'black' }}>
+                <Card>
+                <div className="d-flex justify-content-center" style={{ background: house.party === "D" ? "DarkBlue" : house.party === "R" ? "DarkRed" : "black" }}>
+                  <Card.Img src={house.imageUrl} alt={house.last_name} className="avatar" style={{ width: "20%" }} />
+                </div>
+                <Card.Body>
+                  <Card.Title>Last name: {house.last_name}</Card.Title>
+                  <Card.Title>First name: {house.first_name}</Card.Title>
+                  <Card.Text>Party: {house.party}</Card.Text>
+                  <Card.Text>State: {house.state}</Card.Text>
+                  <Card.Text>District: {house.district}</Card.Text>
+                  <Card.Text>Congress: {house.congress}</Card.Text>
+                </Card.Body>
+              </Card>
+            </Link>
           </div>
         ))}
       </div>
-      <div className="pagination d-flex justify-content-center">
-        <Button onClick={prevPage} disabled={page === 1}>Previous</Button> {/* Button to go to the previous page */}
-        <Button onClick={nextPage} disabled={endIndex >= totalResults}>Next</Button> {/* Button to go to the next page */}
+      <div className="pagination d-flex justify-content-center mt-3">
+        <Button onClick={prevPage} disabled={page === 1} className="btn btn-outline-primary mx-5">Previous</Button>
+        <Button onClick={nextPage} disabled={endIndex >= totalResults} className="btn btn-outline-primary mx-5" >Next</Button>
       </div>
       <div className="results-info text-center">
         Showing {currentPageRange} of {totalResults} results
@@ -89,3 +91,5 @@ export default function HouseCurrentElected() {
     </div>
   );
 }
+
+
