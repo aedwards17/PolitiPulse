@@ -16,13 +16,12 @@ import Register from './frontend/pages/user/Register'
 import HouseMembers from './frontend/components/HouseMembers'
 import SenateMembers from './frontend/components/SenateMembers'
 import {Route, Routes} from "react-router-dom"
-import {AuthProvider} from "./contexts/AuthContext"
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 export default function App() {
   return (
     <main>
-      <AuthProvider>
+      
         <NavBar />
         <div className = "container">
           <Routes>
@@ -43,7 +42,6 @@ export default function App() {
             <Route path="/SenateMembers" element={<SenateMembers />} />
           </Routes>
         </div>
-      </AuthProvider>
     </main>
   )
 }

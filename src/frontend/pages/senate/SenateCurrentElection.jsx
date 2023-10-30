@@ -43,7 +43,7 @@ export default function SenateCurrentElected() {
 
   return (
     <div className="container">
-      <h1 className="text-center">senates</h1>
+      <h1 className="text-center">Senators</h1>
       <hr></hr>
       <div className="row">
         {paginatedSenate.map((senate) => (

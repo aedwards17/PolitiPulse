@@ -42,7 +42,6 @@ export default function SenateMembers() {
           <h4>Senator</h4>
           <hr></hr>
           <p>Congress: {memberInfo.congress}</p>
-          <p>District: {memberInfo.district}</p>
           <p>Date of Birth: {memberInfo.dob}</p>
           <p>Facebook: {memberInfo.facebook_account}</p>
           <p>Gender: {memberInfo.gender}</p>
