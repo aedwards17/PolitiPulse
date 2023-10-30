@@ -1,10 +1,13 @@
 // Import necessary components and hooks from react-router-dom
 import {Link, useMatch, useResolvedPath} from "react-router-dom"
 import {Dropdown, Container, NavDropdown, Nav} from "react-bootstrap"
-import Navbar from 'react-bootstrap/Navbar';
+import Navbar from 'react-bootstrap/Navbar'
+import { useAuth  } from '../contexts/contexts'
 
 // NavBar component for the top of the pages
 export default function NavBar() {
+  const { currentUser } = useAuth();
+  
   return (
       <Navbar bg="dark" data-bs-theme="dark"> 
         <Container>
@@ -64,16 +67,22 @@ export default function NavBar() {
                   About
                 </Clink>
               </NavDropdown.Item>
-              <NavDropdown.Item>
-                <Clink to="/Login">
-                  Login
-                </Clink> 
-              </NavDropdown.Item>
-              <NavDropdown.Item>
-                <Clink to="/Register">
-                  Register
-                </Clink>
-              </NavDropdown.Item>
+              {!currentUser && (
+                <>
+                  <NavDropdown.Item>
+                    <Clink to="/Login">Login</Clink> 
+                  </NavDropdown.Item>
+                  <NavDropdown.Item>
+                    <Clink to="/Register">Register</Clink>
+                  </NavDropdown.Item>
+                </>
+              )}
+
+              {currentUser && (
+                <NavDropdown.Item>
+                  <Clink to="/UserProfile">Profile</Clink>
+                </NavDropdown.Item>
+              )}
             </NavDropdown>
           </Nav>
         </Container>

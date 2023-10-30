@@ -3,7 +3,6 @@ import { Card, Form, Button, Container, Alert } from 'react-bootstrap'
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 
 
-
 export default function Login(){
   return (
     <Container 
@@ -22,7 +21,7 @@ export default function Login(){
 function LoginComp() {
   const emailRef = useRef()
   const passwordRef = useRef()
-
+  
   const auth = getAuth();
 
   function onSubmit(e) {

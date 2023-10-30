@@ -16,32 +16,34 @@ import Register from './frontend/pages/user/Register'
 import HouseMembers from './frontend/components/HouseMembers'
 import SenateMembers from './frontend/components/SenateMembers'
 import {Route, Routes} from "react-router-dom"
+import { AuthProvider } from './frontend/contexts/contexts'
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 export default function App() {
   return (
-    <main>
-      
-        <NavBar />
-        <div className = "container">
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/HCE" element={<HouseCE />} />
-            <Route path="/HE" element={<HouseE />} />
-            <Route path="/HRB" element={<HouseRB />} />
-            <Route path="/HUB" element={<HouseUB />} />
-            <Route path="/SCE" element={<SenateCE />} />
-            <Route path="/SE" element={<SenateE />} />
-            <Route path="/SRB" element={<SenateRB />} />
-            <Route path="/SUB" element={<SenateUB />} />
-            <Route path="/UserProfile" element={<UserProfile />} />
-            <Route path="/About" element={<About />} />
-            <Route path="/Login" element={<Login />} />
-            <Route path="/Register" element={<Register />} />
-            <Route path="/HouseMembers" element={<HouseMembers />} />
-            <Route path="/SenateMembers" element={<SenateMembers />} />
-          </Routes>
-        </div>
-    </main>
+    <AuthProvider>
+      <main>
+          <NavBar />
+          <div className = "container">
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/HCE" element={<HouseCE />} />
+              <Route path="/HE" element={<HouseE />} />
+              <Route path="/HRB" element={<HouseRB />} />
+              <Route path="/HUB" element={<HouseUB />} />
+              <Route path="/SCE" element={<SenateCE />} />
+              <Route path="/SE" element={<SenateE />} />
+              <Route path="/SRB" element={<SenateRB />} />
+              <Route path="/SUB" element={<SenateUB />} />
+              <Route path="/UserProfile" element={<UserProfile />} />
+              <Route path="/About" element={<About />} />
+              <Route path="/Login" element={<Login />} />
+              <Route path="/Register" element={<Register />} />
+              <Route path="/HouseMembers" element={<HouseMembers />} />
+              <Route path="/SenateMembers" element={<SenateMembers />} />
+            </Routes>
+          </div>
+      </main>
+    </AuthProvider>
   )
 }
