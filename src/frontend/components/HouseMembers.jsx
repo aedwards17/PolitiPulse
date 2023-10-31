@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import { collection, query, where, getDocs } from "firebase/firestore";
+import { collection, query, where, getDocs, doc, getDoc, limit } from "firebase/firestore";
 import { db } from "../../firebase";
 import { Card } from "react-bootstrap";
 
 export default function HouseMembers() {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
-  const houseId = queryParams.get("houseId");
+  const houseMemberId = queryParams.get("houseMemberId");
 
   const [memberInfo, setMemberInfo] = useState({});
   const [recentBills, setRecentBills] = useState([]);
@@ -15,10 +15,10 @@ export default function HouseMembers() {
   const [recentStatements, setRecentStatements] = useState([]);
 
   useEffect(() => {
-    // Fetch member info based on houseId
+    // Fetch member info based on houseMemberId
     const fetchMemberInfo = async () => {
       try {
-        const q = query(collection(db, "house"), where("__name__", "==", houseId));
+        const q = query(collection(db, "house"), where("__name__", "==", houseMemberId));
         const querySnapshot = await getDocs(q);
         const memberData = querySnapshot.docs[0].data();
         setMemberInfo(memberData);
@@ -27,11 +27,46 @@ export default function HouseMembers() {
       }
     };
 
-    // Fetch recent bills, member bio, and recent statements here
+    const fetchMemberVotes = async () => {
+      let allRecentBills = []; // Temporary array to accumulate positions
+
+      const votesSnapshot = await getDocs(query(collection(db, 'votes'), limit(10))); 
+      
+      const promises = votesSnapshot.docs.map(async (voteDoc) => {
+        const q = query(
+          collection(db, `votes/${voteDoc.id}/positions`),
+          where('__name__', '==', houseMemberId),
+        );
+
+        const positionsSnapshot = await getDocs(q);
+
+        if (!positionsSnapshot.empty){
+          const voteDocRef = doc(db, 'votes', voteDoc.id);
+          const voteDocData = await getDoc(voteDocRef);
+
+          if(voteDocData.exists()){
+            let bill_id = voteDocData.data().bill_id;
+
+            positionsSnapshot.forEach((positionDoc) => {
+              const position = { 
+                "bill": bill_id, 
+                "roll_call": voteDoc.id, 
+                "position": positionDoc.data().vote_position 
+              };
+              allRecentBills.push(position); // Pushing each position to the temporary array
+            });
+          }
+        }
+      });
+
+      await Promise.all(promises); // Wait for all promises to resolve
+
+      setRecentBills(allRecentBills); // Setting the state once with all positions
+    }
 
     fetchMemberInfo();
-    // Fetch other data here if needed
-  }, [houseId]);
+    fetchMemberVotes();
+  }, [houseMemberId]);
 
   return (
     <div>
@@ -56,24 +91,42 @@ export default function HouseMembers() {
       </Card>
 
       <div className="row mt-4">
+        {/* Recent Bills Voted On Card */}
         <div className="col-md-6">
           <h2>Recent Bills Voted On</h2>
           <Card>
             <Card.Body>
-              {/* Add code to display recent bills here */}
+              <div style={{ maxHeight: '400px', overflowY: 'auto' }}> 
+              {recentBills.length > 0 ? (
+                recentBills.map((bill, index) => (
+                  <div key={index}>
+                    <p><strong>Bill ID:</strong> {bill.bill}</p>
+                    <p><strong>Rollcall Number:</strong> {bill.roll_call}</p>
+                    <p><strong>Vote Position:</strong> {bill.position}</p>
+                    <hr />
+                  </div>
+                ))
+              ) : (
+                <p>No recent bills available.</p>
+              )}
+                </div>
             </Card.Body>
           </Card>
         </div>
+
+        {/* Member Bio Card */}
         <div className="col-md-6">
           <h2>Member Bio</h2>
           <Card>
             <Card.Body>
+              {/* You can insert the code to display the member bio here */}
               {memberBio}
             </Card.Body>
           </Card>
         </div>
       </div>
 
+      {/* Recent Statements Card */}
       <h2>Recent Statements</h2>
       <Card>
         <Card.Body>

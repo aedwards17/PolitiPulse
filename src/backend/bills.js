@@ -58,7 +58,7 @@ https://politipulse.austinedwards5.repl.co
           bill_summary: bill.summary !== undefined ? bill.summary : null,
           bill_short_summary: bill.summary_short !== undefined ? bill.summary_short : null,
           bill_url: bill_url !== undefined ? bill_url : null,
-        });
+        }, {merge: true});
       }
     } else {
       console.log('No results found for the query.');

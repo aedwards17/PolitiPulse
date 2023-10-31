@@ -13,7 +13,7 @@ admin.initializeApp({
 
 // Set up a connection to the Firestore database and configure Firestore settings
 const db = admin.firestore();
-db.settings({ ignoreUndefinedProperties: true });
+db.settings({ ignoreUndefinedProperties: true });=
 
 // Retrieve the API key for ProPublica from an environment variable
 const apiKey = process.env['API_KEY'];

@@ -58,7 +58,7 @@ async function fetchAndPushData() {
           youtube_account: member.youtube_account,
           website: member.url,
           next_election: member.next_election
-        });
+        }, {merge: true});
       }
     } else {
       console.log('No results found for the query.');

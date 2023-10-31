@@ -63,7 +63,7 @@ export default function HouseCurrentElected() {
       <div className="row">
         {paginatedHouse.map((house) => (
           <div key={house.id} className={`col-md-4 mb-4`}>
-            <Link to={`/HouseMembers?houseId=${house.id}`} style={{ textDecoration: 'none', color: 'black' }}>
+            <Link to={`/HouseMembers?houseMemberId=${house.id}`} style={{ textDecoration: 'none', color: 'black' }}>
                 <Card>
                 <div className="d-flex justify-content-center" style={{ background: house.party === "D" ? "DarkBlue" : house.party === "R" ? "DarkRed" : "black" }}>
                   <Card.Img src={house.imageUrl} alt={house.last_name} className="avatar" style={{ width: "20%" }} />

@@ -58,7 +58,7 @@ async function fetchAndPushData() {
           website: member.url,
           contact: member.contact_form,
 
-        });
+        }, {merge: true});
       }
     } else {
       console.log('No results found for the query.');
