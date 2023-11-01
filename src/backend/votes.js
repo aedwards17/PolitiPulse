@@ -13,7 +13,7 @@ admin.initializeApp({
 
 // Set up a connection to the Firestore database and configure Firestore settings
 const db = admin.firestore();
-db.settings({ ignoreUndefinedProperties: true });=
+db.settings({ ignoreUndefinedProperties: true });
 
 // Retrieve the API key for ProPublica from an environment variable
 const apiKey = process.env['API_KEY'];
@@ -47,7 +47,7 @@ async function fetchAndPushData(offset) {
 
         await docRef.set({
           bill_id: billId,
-        });
+        }, {merge: true});
       }
     } else {
       console.log('No results found for the query.');
@@ -69,21 +69,24 @@ async function getMemberInfo(roll_call_number) {
 
     if (data.results) {
       const positions = data.results.votes.vote.positions;
+      const question = data.results.votes.vote.question; // Extract the question
       const batch = db.batch();
-      const memberRef = db.collection('votes').doc(roll_call_number);
+      const voteRef = db.collection('votes').doc(roll_call_number);
+
+      // Save the question in the vote document
+      batch.set(voteRef, { question }, { merge: true });
 
       positions.forEach((position) => {
         const memberId = position.member_id;
-        const memberPosition = position.vote_position;
+        const memberPosition = position.vote_position; // Ensure this is the correct field
 
         // Check if memberId is defined, and set the field accordingly
-        const memberData = { vote_position: memberPosition };
         if (memberId) {
-          const positionRef = memberRef.collection('positions').doc(memberId);
-          batch.set(positionRef, memberData);
+          const positionRef = voteRef.collection('positions').doc(memberId);
+          batch.set(positionRef, { vote_position: memberPosition });
         } else {
           // If memberId is missing, set null to avoid overwriting existing data
-          batch.set(memberRef, { missing_member_id: null }, { merge: true });
+          batch.set(voteRef, { missing_member_id: null }, { merge: true });
         }
       });
 
@@ -96,6 +99,7 @@ async function getMemberInfo(roll_call_number) {
     console.error('Error fetching data:', error.message);
   }
 }
+
 
 // Define the main function for orchestration
 async function main() {
@@ -119,7 +123,6 @@ async function main() {
       const memberPromises = [];
 
       querySnapshot.forEach((doc) => {
-        console.log(`Document ID: ${doc.id}`, doc.data());
         memberPromises.push(getMemberInfo(doc.id));
       });
 
