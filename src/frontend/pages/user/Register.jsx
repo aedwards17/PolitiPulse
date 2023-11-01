@@ -1,7 +1,7 @@
-import React, {useRef, useState} from 'react'
-import { Card, Form, Button, Container, Alert } from 'react-bootstrap'
+import React, {useRef} from 'react'
+import { Card, Form, Button, Container} from 'react-bootstrap'
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
-
+import { useNavigate } from 'react-router-dom';
 
 
 export default function Signup(){
@@ -23,8 +23,8 @@ function SignupComp() {
   const emailRef = useRef()
   const passwordRef = useRef()
   const passwordConfirmRef = useRef()
-
-  const auth = getAuth();
+  const navigate = useNavigate()
+  const auth = getAuth()
 
   function onSubmit(e) {
     e.preventDefault(); // Prevents the default form submit action
@@ -44,6 +44,7 @@ function SignupComp() {
       // Handle successful account creation
       const user = userCredential.user;
       console.log(user);
+      navigate("/");
     })
     .catch((error) => {
       // Handle errors

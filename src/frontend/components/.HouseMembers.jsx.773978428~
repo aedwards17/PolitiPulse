@@ -98,7 +98,7 @@ export default function HouseMembers() {
               <hr></hr>
               <p><strong>Congress: </strong>{memberInfo.congress}</p>
               <p><strong>District: </strong>{memberInfo.district}</p>
-              <p><strong>D</strong>Date of Birth: {memberInfo.dob}</p>
+              <p><strong>Date of </strong>Date of Birth: {memberInfo.dob}</p>
               <p>Facebook: {memberInfo.facebook_account}</p>
               <p>Gender: {memberInfo.gender}</p>
               <p>Next Election: {memberInfo.next_election}</p>

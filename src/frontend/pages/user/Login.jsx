@@ -1,5 +1,6 @@
-import React, {useRef, useState} from 'react'
-import { Card, Form, Button, Container, Alert } from 'react-bootstrap'
+import React, {useRef} from 'react'
+import { useNavigate } from 'react-router-dom';
+import { Card, Form, Button, Container} from 'react-bootstrap'
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 
 
@@ -21,6 +22,7 @@ export default function Login(){
 function LoginComp() {
   const emailRef = useRef()
   const passwordRef = useRef()
+  const navigate = useNavigate();
   
   const auth = getAuth();
 
@@ -38,6 +40,7 @@ function LoginComp() {
         const user = userCredential.user;
         console.log(user)
         console.log("User is logged in")
+        navigate("/")
       })
       .catch((error) => {
         const errorCode = error.code;
