@@ -89,7 +89,7 @@ export default function HouseMembers() {
         {/* Member Info Card */}
         <div className="col-md-6">
           <h2 class="text-center">Member Info</h2>
-          <Card>
+          <Card className="bg-light">
             <Card.Body>
               <div style={{ position: 'relative' }}>
                 {/* Displaying the image at the top right corner */}
@@ -129,20 +129,24 @@ export default function HouseMembers() {
 
         {/* Recent Bills Voted On Card */}
         <div className="col-md-6">
-          <h2 class="text-center">Recent Bills Voted On</h2>
-          <Card>
+          <h2 className="text-center">Recent Bills Voted On</h2>
+          <Card className="bg-light hover-overlay">
             <Card.Body>
               <div style={{ maxHeight: '607px', overflowY: 'auto' }}>
                 {recentBills.length > 0 ? (
                   recentBills.map((bill, index) => (
-                    <div key={index}>
+                    <a
+                      key={index}
+                      href={`/BillPages?billId=${bill.bill}`}
+                      className="list-group-item list-group-item-action text-decoration-none"
+                    >
                       <p><strong>Bill Title:</strong> {bill.bill_title}</p>
                       <p><strong>Bill ID:</strong> {bill.bill}</p>
                       <p><strong>Rollcall Number:</strong> {bill.roll_call}</p>
                       <p><strong>Question:</strong> {bill.question}</p>
                       <p><strong>Vote Position:</strong> {bill.position}</p>
                       <hr />
-                    </div>
+                    </a>
                   ))
                 ) : (
                   <p>No recent bills available.</p>
@@ -151,26 +155,7 @@ export default function HouseMembers() {
             </Card.Body>
           </Card>
         </div>
-
-        {/* Member Bio Card */}
-        <div className="col-md-6">
-          <h2>Member Bio</h2>
-          <Card>
-            <Card.Body>
-              {/* You can insert the code to display the member bio here */}
-              {memberBio}
-            </Card.Body>
-          </Card>
-        </div>
       </div>
-
-      {/* Recent Statements Card */}
-      <h2>Recent Statements</h2>
-      <Card>
-        <Card.Body>
-          {/* Add code to display recent statements here */}
-        </Card.Body>
-      </Card>
     </div>
   );
 }

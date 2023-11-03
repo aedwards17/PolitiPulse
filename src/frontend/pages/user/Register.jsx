@@ -2,7 +2,8 @@ import React, {useRef} from 'react'
 import { Card, Form, Button, Container} from 'react-bootstrap'
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import { useNavigate } from 'react-router-dom';
-
+import { setDoc, doc } from "firebase/firestore";
+import { db } from "../../../firebase";
 
 export default function Signup(){
   return (
@@ -17,7 +18,12 @@ export default function Signup(){
   )
 }
 
-
+async function writeUserData(userId, email) {
+  await setDoc(doc(db, "users", userId), {
+    userId: userId,
+    email: email
+  });
+}
 
 function SignupComp() {
   const emailRef = useRef()
@@ -27,10 +33,9 @@ function SignupComp() {
   const auth = getAuth()
 
   function onSubmit(e) {
-    e.preventDefault(); // Prevents the default form submit action
+    e.preventDefault(); 
 
     if (passwordRef.current.value !== passwordConfirmRef.current.value) {
-      // Handle the case where the passwords don't match
       console.error("Passwords do not match");
       return;
     }
@@ -41,13 +46,12 @@ function SignupComp() {
       passwordRef.current.value
     )
     .then((userCredential) => {
-      // Handle successful account creation
       const user = userCredential.user;
       console.log(user);
-      navigate("/");
+      writeUserData(user.uid, emailRef.current.value)
+      navigate("/UserProfile");
     })
     .catch((error) => {
-      // Handle errors
       const errorCode = error.code;
       const errorMessage = error.message;
       console.error(errorCode, errorMessage);

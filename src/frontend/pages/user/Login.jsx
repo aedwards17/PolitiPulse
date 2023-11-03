@@ -24,7 +24,6 @@ function LoginComp() {
   const passwordRef = useRef()
   const navigate = useNavigate();
   
-  const auth = getAuth();
 
   function onSubmit(e) {
     e.preventDefault(); // Prevents the default form submit action
