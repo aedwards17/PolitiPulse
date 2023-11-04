@@ -16,6 +16,7 @@ import Register from './frontend/pages/user/Register'
 import Signout from "./frontend/pages/user/Signout"
 import HouseMembers from './frontend/components/HouseMembers'
 import SenateMembers from './frontend/components/SenateMembers'
+import BillPages from './frontend/components/BillPages'
 import {Route, Routes} from "react-router-dom"
 import { AuthProvider } from './frontend/contexts/contexts'
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -43,6 +44,7 @@ export default function App() {
               <Route path="/Signout" element={<Signout />} />
               <Route path="/HouseMembers" element={<HouseMembers />} />
               <Route path="/SenateMembers" element={<SenateMembers />} />
+              <Route path="/BillPages" element={<BillPages />} />
             </Routes>
           </div>
       </main>
