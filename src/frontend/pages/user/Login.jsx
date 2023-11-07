@@ -46,7 +46,6 @@ function LoginComp() {
         const errorMessage = error.message;
         console.error(errorCode, errorMessage);
       });
-    
   }
   return (
     <>

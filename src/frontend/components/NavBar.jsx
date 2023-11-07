@@ -7,7 +7,7 @@ import { useAuth  } from '../contexts/contexts'
 // NavBar component for the top of the pages
 export default function NavBar() {
   const { currentUser } = useAuth();
-  
+
   return (
       <Navbar bg="dark" data-bs-theme="dark"> 
         <Container>

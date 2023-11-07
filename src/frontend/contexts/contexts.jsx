@@ -19,7 +19,6 @@ export function AuthProvider({ children }) {
       setLoading(false);
     });
 
-    // Cleanup subscription on unmount
     return () => unsubscribe();
   }, []);
 
