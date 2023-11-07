@@ -56,9 +56,9 @@ export default function HouseMembers() {
             if (billDocData.exists()) {
               bill_title = billDocData.data().bill_title
                 console.log(bill_title);
+            }else{
+              console.log('data does not exist')
             }
-
-
             positionsSnapshot.forEach((positionDoc) => {
               const position = {
                 "bill": bill_id,

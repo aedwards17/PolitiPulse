@@ -20,8 +20,14 @@ export default function BillDetails() {
         const billDocSnap = await getDoc(billDocRef);
 
         if (billDocSnap.exists()) {
-          setBillInfo(billDocSnap.data());
-          setBillSimplified(billDocSnap.data().bill_simplified || "");
+          const billData = billDocSnap.data();
+          setBillInfo(billData);
+
+          // Replace newlines with HTML line breaks
+          const simplifiedTextWithBreaks = billData.bill_simplified
+            ? billData.bill_simplified.replace(/\n/g, '<br>')
+            : "";
+          setBillSimplified(simplifiedTextWithBreaks);
         } else {
           console.log("No such document!");
         }
@@ -33,20 +39,20 @@ export default function BillDetails() {
     fetchBillInfo();
   }, [billId]);
 
+
   return (
     <div className="row mt-4">
       {/* Bill Details Card */}
       <div className="col-md-6">
         <Card className="bg-light">
           <Card.Body>
-            <h2 className="text-center">{billInfo.bill_title}</h2>
+            <h2 className="text-center">Bill Info</h2>
             <p><strong>Date:</strong> {billInfo.bill_date}</p>
             <p><strong>Description:</strong> {billInfo.bill_description}</p>
             <p><strong>Number:</strong> {billInfo.bill_number}</p>
             <p><strong>Status:</strong> {billInfo.bill_status}</p>
-            <p><strong>Title:</strong> {billInfo.bill_title}</p>
             <p><strong>Latest Major Action:</strong> {billInfo.latest_major_action}</p>
-            <p><strong>Latest Action Date:</strong> {billInfo.latest_major_action_date}</p>
+            <p><strong>Latest Action Date:</strong> {billInfo.latest_major_action_date}</p>                                      <p><strong>Full Bill URL: </strong><a href={billInfo.bill_url} target="_blank">{billInfo.bill_url}</a></p>
           </Card.Body>
         </Card>
       </div>

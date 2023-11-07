@@ -3,6 +3,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { useAuth } from '../../contexts/contexts';
 import { db } from "../../../firebase";
 import { collection, query, where, getDocs, doc, getDoc } from "firebase/firestore"; // Ensure to import doc and getDoc
+import { Link } from 'react-router-dom';
 
 export default function Home() {
   const [congressMembers, setCongressMembers] = useState([]);
@@ -21,13 +22,20 @@ export default function Home() {
             const senateQuery = query(collection(db, 'senate'), where('state', '==', userData.userState));
             const houseQuery = query(collection(db, 'house'), where('district', '==', userData.userVD), where('state', '==', userData.userState));
 
-            // Fetch senate members
-            const senateSnapshot = await getDocs(senateQuery);
-            senateSnapshot.forEach((docSnap) => members.push(docSnap.data()));
+              // Fetch senate members
+              const senateSnapshot = await getDocs(senateQuery);
+              senateSnapshot.forEach((docSnap) => {
+                // Include the document ID in the member object
+                members.push({ id: docSnap.id, ...docSnap.data() });
+              });
 
-            // Fetch house members
-            const houseSnapshot = await getDocs(houseQuery);
-            houseSnapshot.forEach((docSnap) => members.push(docSnap.data()));
+              // Fetch house members
+              const houseSnapshot = await getDocs(houseQuery);
+              houseSnapshot.forEach((docSnap) => {
+                // Include the document ID in the member object
+                members.push({ id: docSnap.id, ...docSnap.data() });
+              });
+
 
             setCongressMembers(members);
           } else {
@@ -56,8 +64,17 @@ return (
             <h5 className="card-title">Your Congress Members</h5>
             <ul className="card-text">
               {congressMembers.map(member => (
-                <li key={member.id}>{member.title} {member.first_name} {member.last_name} ({member.party})</li>
+                <li key={member.id}>
+                  <strong>{member.title}: </strong>
+                  {member.title === "Representative" ? (
+                    <Link to={`/HouseMembers?houseMemberId=${member.id}`}>{member.first_name} {member.last_name}</Link>
+                  ) : (
+                    <Link to={`/SenateMembers?senateMemberId=${member.id}`}>{member.first_name} {member.last_name}</Link>
+                  )}
+                  ({member.party})
+                </li>
               ))}
+
             </ul>
           </div>
         </div>
@@ -68,7 +85,6 @@ return (
         <div className="card">
           <div className="card-body">
             <h5 className="card-title">Recent Bills</h5>
-            <p className="card-text">Information on recent bills can be found here.</p>
           </div>
         </div>
       </div>
@@ -77,8 +93,7 @@ return (
       <div className="col-md-6 mb-4">
         <div className="card">
           <div className="card-body">
-            <h5 className="card-title">Recent userStatements</h5>
-            <p className="card-text">Recent userStatements from your representatives will be shown here.</p>
+            <h5 className="card-title">Recent Statements</h5>
           </div>
         </div>
       </div>
@@ -87,8 +102,7 @@ return (
       <div className="col-md-6 mb-4">
         <div className="card">
           <div className="card-body">
-            <h5 className="card-title">Political News</h5>
-            <p className="card-text">The latest political news related to you will be updated here.</p>
+            <h5 className="card-title">Related News</h5>
           </div>
         </div>
       </div>
