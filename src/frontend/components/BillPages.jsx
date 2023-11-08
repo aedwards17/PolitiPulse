@@ -43,10 +43,10 @@ export default function BillDetails() {
   return (
     <div className="row mt-4">
       {/* Bill Details Card */}
-      <div className="col-md-6">
+      <div className="col-md-6 mb-4">
         <Card className="bg-light">
-          <Card.Body>
-            <h2 className="text-center">Bill Info</h2>
+          <Card.Header className="bg-light"><strong><h2>Bill Info</h2></strong></Card.Header>
+          <Card.Body className="bg-white">
             <p><strong>Date:</strong> {billInfo.bill_date}</p>
             <p><strong>Description:</strong> {billInfo.bill_description}</p>
             <p><strong>Number:</strong> {billInfo.bill_number}</p>
@@ -58,10 +58,10 @@ export default function BillDetails() {
       </div>
 
       {/* Bill Simplified Text Card */}
-      <div className="col-md-6">
+      <div className="col-md-6 mb-4">
         <Card className="bg-light">
-          <Card.Body>
-            <h2 className="text-center">Simplified Bill Text</h2>
+          <Card.Header className="bg-light"><strong><h2>Simplified Bill Text</h2></strong></Card.Header>
+          <Card.Body className="bg-white">
           <div dangerouslySetInnerHTML={{ __html: billSimplified }} />
           </Card.Body>
         </Card>
