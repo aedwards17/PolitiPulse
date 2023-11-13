@@ -13,7 +13,7 @@ export default function NavBar() {
         <Container>
           <Navbar.Brand>
             <Clink to="/">
-              Home
+              Poltipulse
             </Clink>
           </Navbar.Brand>
           <Nav className="me-auto">
@@ -95,18 +95,14 @@ export default function NavBar() {
   )
 }
 
-// Custom link component that adds active class to the link that matches the current URL
 function Clink({to, children, ...props}) {
-  // Resolve the path to an absolute path
   const resolvedPath = useResolvedPath(to);
-  // Check if the current path matches the target path exactly
   const isActive = useMatch({path: resolvedPath.pathname, end: true});
 
-  // Return a list item with the link. If the link is active, add the "active" class
   return (
     <Nav.Link className={isActive ? "active" : ""}>
       <Link to={to} {...props}>
-        {children} {/* Render the link text or child components */}
+        {children} 
       </Link>
     </Nav.Link>  
   )

@@ -55,8 +55,8 @@ export default function HouseMembers() {
             let bill_title = "";
             if (billDocData.exists()) {
               bill_title = billDocData.data().bill_title
-                console.log(bill_title);
-            }else{
+              console.log(bill_title);
+            } else {
               console.log('data does not exist')
             }
             positionsSnapshot.forEach((positionDoc) => {
@@ -90,7 +90,7 @@ export default function HouseMembers() {
         <div className="col-md-6">
           <h2 class="text-center">Member Info</h2>
           <Card className="bg-light">
-            <Card.Body>
+            <Card.Header>
               <div style={{ position: 'relative' }}>
                 {/* Displaying the image at the top right corner */}
                 {memberInfo.imageUrl && (
@@ -112,6 +112,8 @@ export default function HouseMembers() {
               <h4><strong>Representative</strong></h4>
               <br></br>
               <hr></hr>
+            </Card.Header>
+            <Card.Body className="bg-white">
               <p><strong>Congress: </strong>{memberInfo.congress}</p>
               <p><strong>District: </strong>{memberInfo.district}</p>
               <p><strong>Date of Birth: </strong>{memberInfo.dob}</p>
@@ -130,7 +132,7 @@ export default function HouseMembers() {
         {/* Recent Bills Voted On Card */}
         <div className="col-md-6">
           <h2 className="text-center">Recent Bills Voted On</h2>
-          <Card className="bg-light hover-overlay">
+          <Card className="bgwhite hover-overlay">
             <Card.Body>
               <div style={{ maxHeight: '607px', overflowY: 'auto' }}>
                 {recentBills.length > 0 ? (

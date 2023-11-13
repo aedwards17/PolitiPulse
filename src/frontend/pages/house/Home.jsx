@@ -19,10 +19,10 @@ export default function Home() {
           const userDoc = await getDoc(userRef);
           if (userDoc.exists()) {
             const userData = userDoc.data();
-            if (userData.userVD || userData.userState) {
+            if (userData.district || userData.state) {
               const members = [];
-              const senateQuery = query(collection(db, 'senate'), where('state', '==', userData.userState));
-              const houseQuery = query(collection(db, 'house'), where('district', '==', userData.userVD), where('state', '==', userData.userState));
+              const senateQuery = query(collection(db, 'senate'), where('state', '==', userData.state));
+              const houseQuery = query(collection(db, 'house'), where('district', '==', userData.district), where('state', '==', userData.state));
 
               // Fetch senate members
               const senateSnapshot = await getDocs(senateQuery);

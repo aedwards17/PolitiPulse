@@ -20,10 +20,10 @@ export default function Signup(){
 
 async function writeUserData(userId, email, state, vd) {
   await setDoc(doc(db, "users", userId), {
-    userId: userId,
+    user_id: userId,
     email: email,
-    userState: state,
-    userVD: vd
+    state: state,
+    district: vd
   });
 }
 

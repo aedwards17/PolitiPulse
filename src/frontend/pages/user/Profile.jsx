@@ -7,7 +7,6 @@ import { getFirestore, doc, getDoc } from "firebase/firestore";
 async function getUserState(userID) {
   const db = getFirestore();
 
-  // Ensure that "users" is the name of the collection and userID is the ID of the document.
   const userDocRef = doc(db, "users", userID);
 
   try {
@@ -15,7 +14,6 @@ async function getUserState(userID) {
 
     if (docSnap.exists()) {
       const userData = docSnap.data();
-      // Assuming "state" is the field in the document you want to retrieve.
       return userData.state; 
     } else {
       console.log("No such document!");
@@ -48,8 +46,6 @@ export default function Profile() {
 
       } 
     });
-
-    // Cleanup subscription on unmount
     return () => unsubscribe();
   }, []);
 

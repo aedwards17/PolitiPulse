@@ -47,6 +47,7 @@ export default function BillDetails() {
         <Card className="bg-light">
           <Card.Header className="bg-light"><strong><h2>Bill Info</h2></strong></Card.Header>
           <Card.Body className="bg-white">
+            <p><strong>Title:</strong> {billInfo.bill_title}</p>
             <p><strong>Date:</strong> {billInfo.bill_date}</p>
             <p><strong>Description:</strong> {billInfo.bill_description}</p>
             <p><strong>Number:</strong> {billInfo.bill_number}</p>
