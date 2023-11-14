@@ -1,7 +1,7 @@
 const OpenAI = require('openai').OpenAI;
 const admin = require('firebase-admin');
 const xml2js = require('xml2js');
-const axios = require('axios'); // Ensure you have imported axios
+const axios = require('axios'); 
 
 const openai = new OpenAI({
   apiKey: process.env['OPENAI_API_KEY'],
@@ -14,7 +14,7 @@ admin.initializeApp({
   databaseURL: "https://politipulse-default-rtdb.firebaseio.com"
 });
 
-const firestore = admin.firestore(); // Assuming firestore is what you meant to use.
+const firestore = admin.firestore(); 
 
 // Function to fetch and process XML data
 const processXMLData = async (url) => {
@@ -32,8 +32,7 @@ const processXMLData = async (url) => {
 
 const simplifyBill = async () => {
   try {
-    // Array of hard-coded bill IDs that you want to update
-    const billIdsToUpdate = ['hr4365-118']; // Replace with actual bill IDs
+    const billIdsToUpdate = ['hr4365-118']; 
 
     for (const billId of billIdsToUpdate) {
       const docRef = firestore.collection('bills').doc(billId);
@@ -45,7 +44,7 @@ const simplifyBill = async () => {
           const textToProcess = await processXMLData(data.bill_url);
           if (textToProcess) {
             // Split the text into chunks
-            const MAX_CHAR = 4096 * 3.8; // Set the maximum tokens for a single request
+            const MAX_CHAR = 4096 * 3.8; 
             const chunks = splitIntoChunks(textToProcess, MAX_CHAR);
             // Array to hold simplified text chunks
             const simplifiedTextChunks = [];
