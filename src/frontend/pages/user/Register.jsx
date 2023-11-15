@@ -35,7 +35,8 @@ function SignupComp() {
   const passwordConfirmRef = useRef()
   const navigate = useNavigate()
   const auth = getAuth()
-
+  
+  
   function onSubmit(e) {
     e.preventDefault(); 
 

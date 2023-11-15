@@ -28,6 +28,6 @@ language = "nodejs"
     start = "typescript-language-server --stdio"
 
 [deployment]
-deploymentTarget = "cloudrun"
+deploymentTarget = "static"
 build = ["npm", "run", "build"]
-run = ["sh", "-c", "run"]
+publicDir = "dist"

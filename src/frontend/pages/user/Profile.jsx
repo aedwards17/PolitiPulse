@@ -2,53 +2,48 @@ import React, { useState, useEffect } from 'react';
 import {Button, Form, Col, Row } from "react-bootstrap"
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { getFirestore, doc, getDoc } from "firebase/firestore";
+import { db } from '../../../firebase';
 
-
-async function getUserState(userID) {
-  const db = getFirestore();
-
-  const userDocRef = doc(db, "users", userID);
-
-  try {
-    const docSnap = await getDoc(userDocRef);
-
-    if (docSnap.exists()) {
-      const userData = docSnap.data();
-      return userData.state; 
-    } else {
-      console.log("No such document!");
-    }
-  } catch (error) {
-    console.error("Error getting document:", error);
-  }
-}
 
 export default function Profile() {
-  
+  const auth = getAuth();
   const [userEmail, setUserEmail] = useState('');
   const [userID, setUserID] = useState('');
   const [userState, setUserState] = useState('');
   const [userVD, setUserVD] = useState('');
 
-  
   useEffect(() => {
-    const auth = getAuth();
-    
-    
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
-        const uid = user.uid;
-        const email = user.email;
-        
-        setUserEmail(email);
-        setUserID(uid);
-        setUserState("State");
-
-      } 
+        setUserID(user.uid);
+        fetchUserData(user.uid);
+      } else {
+        // Handle user not signed in
+      }
     });
-    return () => unsubscribe();
-  }, []);
 
+    return () => unsubscribe();
+  }, [auth]);
+
+  const fetchUserData = async (uid) => {
+    try {
+      const userDocRef = doc(db, "users", uid);
+      const docSnap = await getDoc(userDocRef);
+
+      if (docSnap.exists()) {
+        const userData = docSnap.data();
+        setUserEmail(userData.email);
+        setUserState(userData.state);
+        setUserVD(userData.district);
+      } else {
+        console.log("No such document!");
+      }
+    } catch (error) {
+      console.error("Error fetching data from Firestore:", error.message);
+    }
+  };
+  
+  
   return (
     <div className="container mt-4">
       <h2>User Profile</h2>
