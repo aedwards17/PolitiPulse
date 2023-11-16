@@ -13,9 +13,9 @@ export default function SenateCurrentElected() {
   const [perPage] = useState(5); // Number of items to display per page (set to 5)
 
   // Function to fetch data from Firestore
-  const fetchCandidates = async () => {
+  const fetchPost = async () => {
     try {
-      // Firestore query to fetch Senate candidates with a specific condition (e.g., next_election is '2024')
+      // Firestore query to fetch Senate candidates with next_election value '2024' and limit the results to 5
       const q = query(collection(db, "senate"), where("next_election", "==", '2024'), limit(5));
       const querySnapshot = await getDocs(q); // Execute the query
       const newData = querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
@@ -27,7 +27,7 @@ export default function SenateCurrentElected() {
 
   // Use the useEffect hook to fetch data when the component mounts
   useEffect(() => {
-    fetchCandidates();
+    fetchPost();
   }, []);
 
   // Calculate the start and end indexes for pagination
@@ -61,20 +61,20 @@ export default function SenateCurrentElected() {
       <h1 className="text-center">Senate Candidates</h1>
       <hr></hr>
       <div className="row">
-        {paginatedSenate.map((candidate) => (
-          <div key={candidate.id} className={`col-md-4 mb-4`}>
-            <Link to={`/SenateMembers?senateId=${candidate.id}`} style={{ textDecoration: 'none', color: 'black' }}>
-              <Card>
-                <div className="d-flex justify-content-center" style={{ background: candidate.party === "D" ? "DarkBlue" : candidate.party === "R" ? "DarkRed" : "black" }}>
-                  <Card.Img src={candidate.imageUrl} alt="Avatar" className="avatar" style={{ width: "20%" }} />
+        {paginatedSenate.map((senate) => (
+          <div key={senate.id} className={`col-md-4 mb-4`}>
+            <Link to={`/SenateMembers?senateMemberId=${senate.id}`} style={{ textDecoration: 'none', color: 'black' }}>
+                <Card>
+                <div className="d-flex justify-content-center" style={{ background: senate.party === "D" ? "DarkBlue" : senate.party === "R" ? "DarkRed" : "black" }}>
+                  <Card.Img src={senate.imageUrl || avatarImage} alt="Avatar" className="avatar" style={{ width: "20%" }} />
                 </div>
                 <Card.Body>
-                  <Card.Title>Last name: {candidate.last_name}</Card.Title>
-                  <Card.Title>First name: {candidate.first_name}</Card.Title>
-                  <Card.Text>Party: {candidate.party}</Card.Text>
-                  <Card.Text>State: {candidate.state}</Card.Text>
-                  <Card.Text>Congress: {candidate.congress}</Card.Text>
-                  <Card.Text>Next Election: {candidate.next_election}</Card.Text>
+                  <Card.Title>Last name: {senate.last_name}</Card.Title>
+                  <Card.Title>First name: {senate.first_name}</Card.Title>
+                  <Card.Text>Party: {senate.party}</Card.Text>
+                  <Card.Text>State: {senate.state}</Card.Text>
+                  <Card.Text>Congress: {senate.congress}</Card.Text>
+                  <Card.Text>Next Election: {senate.next_election}</Card.Text>
                 </Card.Body>
               </Card>
             </Link>
@@ -91,4 +91,3 @@ export default function SenateCurrentElected() {
     </div>
   );
 }
-

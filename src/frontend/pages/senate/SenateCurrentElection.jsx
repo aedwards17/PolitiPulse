@@ -48,7 +48,7 @@ export default function SenateCurrentElected() {
       <div className="row">
         {paginatedSenate.map((senate) => (
           <div key={senate.id} className={`col-md-4 mb-4`}>
-            <Link to={`/SenateMembers?senateId=${senate.id}`} style={{ textDecoration: 'none', color: 'black' }}>
+            <Link to={`/SenateMembers?senateMemberId=${senate.id}`} style={{ textDecoration: 'none', color: 'black' }}>
               <Card>
                 <div className="d-flex justify-content-center" style={{ background: senate.party === "D" ? "DarkBlue" : senate.party === "R" ? "DarkRed" : "black" }}>
                   <Card.Img src={senate.imageUrl} alt="Avatar" className="avatar" style={{ width: "20%" }} />

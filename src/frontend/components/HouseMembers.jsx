@@ -31,7 +31,8 @@ export default function HouseMembers() {
     const fetchMemberVotes = async () => {
       let allRecentBills = []; // Temporary array to accumulate positions
 
-      const votesSnapshot = await getDocs(query(collection(db, 'votes'), limit(10)));
+      const votesSnapshot = await getDocs(query(collection(db, 'votes'), limit(110))); // This needs to change. The limit needs to
+      // be put on the members positions not the total vote query
 
       const promises = votesSnapshot.docs.map(async (voteDoc) => {
         const q = query(
@@ -39,8 +40,8 @@ export default function HouseMembers() {
           where('__name__', '==', houseMemberId),
         );
 
-        const positionsSnapshot = await getDocs(q);
 
+        const positionsSnapshot = await getDocs(q);
         if (!positionsSnapshot.empty) {
           const voteDocRef = doc(db, 'votes', voteDoc.id);
           const voteDocData = await getDoc(voteDocRef);
@@ -71,9 +72,7 @@ export default function HouseMembers() {
           }
         }
       });
-
       await Promise.all(promises); // Wait for all promises to resolve
-
       setRecentBills(allRecentBills); // Setting the state once with all positions
     }
 
@@ -89,7 +88,7 @@ export default function HouseMembers() {
         <div className="col-md-6">
           <h2 class="text-center">Member Info</h2>
           <Card className="bg-light">
-            <Card.Header>
+            <Card.Header className="border">
               <div style={{ position: 'relative' }}>
                 {/* Displaying the image at the top right corner */}
                 {memberInfo.imageUrl && (
@@ -112,7 +111,7 @@ export default function HouseMembers() {
               <br></br>
               <hr></hr>
             </Card.Header>
-            <Card.Body className="bg-white">
+            <Card.Body className="bg-white border">
               <p><strong>Congress: </strong>{memberInfo.congress}</p>
               <p><strong>District: </strong>{memberInfo.district}</p>
               <p><strong>Date of Birth: </strong>{memberInfo.dob}</p>
@@ -131,8 +130,8 @@ export default function HouseMembers() {
         {/* Recent Bills Voted On Card */}
         <div className="col-md-6">
           <h2 className="text-center">Recent Bills Voted On</h2>
-          <Card className="bgwhite hover-overlay">
-            <Card.Body>
+          <Card className="bg-white hover-overlay">
+            <Card.Body className="border">
               <div style={{ maxHeight: '607px', overflowY: 'auto' }}>
                 {recentBills.length > 0 ? (
                   recentBills.map((bill, index) => (
