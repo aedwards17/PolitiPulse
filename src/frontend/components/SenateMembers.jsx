@@ -29,7 +29,7 @@ export default function SenateMembers() {
     const fetchMemberVotes = async () => {
       let allRecentBills = []; // Temporary array to accumulate positions
 
-      const votesSnapshot = await getDocs(query(collection(db, 'votes'), limit(10)));
+      const votesSnapshot = await getDocs(query(collection(db, 'votes'), limit(110)));
 
       const promises = votesSnapshot.docs.map(async (voteDoc) => {
         const q = query(

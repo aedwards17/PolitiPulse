@@ -3,12 +3,8 @@ import NavBar from './frontend/components/NavBar'
 import Home from "./frontend/pages/house/Home"
 import HouseCE from './frontend/pages/house/HouseCurrentElected'
 import HouseE from './frontend/pages/house/HouseElection'
-import HouseRB from './frontend/pages/house/HouseRecentBuisness'
-import HouseUB from './frontend/pages/house/HouseUpcomingBuisness'
 import SenateCE from './frontend/pages/senate/SenateCurrentElection'
 import SenateE from './frontend/pages/senate/SenateElection'
-import SenateRB from './frontend/pages/senate/SenateRecentBusiness'
-import SenateUB from './frontend/pages/senate/SenateUpcomingBusiness'
 import UserProfile from './frontend/pages/user/Profile'
 import About from './frontend/pages/user/About'
 import Login from './frontend/pages/user/Login'
@@ -31,12 +27,8 @@ export default function App() {
               <Route path="/" element={<Home />} />
               <Route path="/HCE" element={<HouseCE />} />
               <Route path="/HE" element={<HouseE />} />
-              <Route path="/HRB" element={<HouseRB />} />
-              <Route path="/HUB" element={<HouseUB />} />
               <Route path="/SCE" element={<SenateCE />} />
               <Route path="/SE" element={<SenateE />} />
-              <Route path="/SRB" element={<SenateRB />} />
-              <Route path="/SUB" element={<SenateUB />} />
               <Route path="/UserProfile" element={<UserProfile />} />
               <Route path="/About" element={<About />} />
               <Route path="/Login" element={<Login />} />

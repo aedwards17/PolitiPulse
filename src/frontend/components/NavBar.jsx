@@ -28,16 +28,6 @@ export default function NavBar() {
                   Election
                 </Clink> 
               </NavDropdown.Item>
-              <NavDropdown.Item>
-                <Clink to="/HRB">
-                  House Recent Business
-                </Clink>
-              </NavDropdown.Item>
-              <NavDropdown.Item>
-                <Clink to="/HUB">
-                  House Upcoming Business
-                </Clink>
-              </NavDropdown.Item>
             </NavDropdown>
             <NavDropdown title="Senate" id="collapsible-nav-dropdown">
               <NavDropdown.Item>
@@ -49,16 +39,6 @@ export default function NavBar() {
                 <Clink to="/SE">
                   Election
                 </Clink> 
-              </NavDropdown.Item>
-              <NavDropdown.Item>
-                <Clink to="/SRB">
-                  Senate Recent Business
-                </Clink>
-              </NavDropdown.Item>
-              <NavDropdown.Item>
-                <Clink to="/SUB">
-                  Senate Upcoming Business
-                </Clink>
               </NavDropdown.Item>
             </NavDropdown>
             <NavDropdown title="User" id="collapsible-nav-dropdown">

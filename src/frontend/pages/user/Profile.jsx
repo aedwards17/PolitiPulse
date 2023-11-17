@@ -1,9 +1,24 @@
-import React, { useState, useEffect } from 'react';
-import {Button, Form, Col, Row } from "react-bootstrap"
-import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { getFirestore, doc, getDoc } from "firebase/firestore";
+import React, { useRef, useState, useEffect } from 'react';
+import {Button, Card, Form} from "react-bootstrap"
+import { getAuth, onAuthStateChanged} from "firebase/auth";
+import { updateDoc, doc, getDoc } from "firebase/firestore";
 import { db } from '../../../firebase';
 
+async function updateFireStore(userID, state, vd) {
+  try {
+    await updateDoc(doc(db, "users", userID), {
+      state: state,
+      district: vd,
+    });
+    console.log("Document successfully updated!");
+  } catch (error) {
+    if (error.code === 'auth/requires-recent-login') {
+      console.log("Please re-authenticate to update your email.");
+    } else {
+      console.error("Error updating email:", error);
+    }
+  }  
+}
 
 export default function Profile() {
   const auth = getAuth();
@@ -11,23 +26,24 @@ export default function Profile() {
   const [userID, setUserID] = useState('');
   const [userState, setUserState] = useState('');
   const [userVD, setUserVD] = useState('');
-
+  const emailRef = useRef(null);
+  const stateRef = useRef(null);
+  const vdRef = useRef(null);
+  
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         setUserID(user.uid);
         fetchUserData(user.uid);
-      } else {
-        // Handle user not signed in
-      }
+      } 
     });
 
     return () => unsubscribe();
   }, [auth]);
 
-  const fetchUserData = async (uid) => {
+  const fetchUserData = async (userID) => {
     try {
-      const userDocRef = doc(db, "users", uid);
+      const userDocRef = doc(db, "users", userID);
       const docSnap = await getDoc(userDocRef);
 
       if (docSnap.exists()) {
@@ -43,36 +59,89 @@ export default function Profile() {
     }
   };
   
+ async function onSubmit(e) {
+    e.preventDefault(); 
+
+   updateFireStore(auth.currentUser.uid, stateRef.current.value, vdRef.current.value);
+  }
   
   return (
-    <div className="container mt-4">
-      <h2>User Profile</h2>
-      <form>
-        <div className="mb-3">
-          <label htmlFor="userEmail" className="form-label">
-            User Email: {userEmail}
-          </label>
-          <input type="email" className="form-control" id="userEmail" placeholder="Enter New Email" />
-        </div>
-
-        <div className="mb-3">
-          <label htmlFor="userState" className="form-label">
-            State: {userState}
-          </label>
-          <input type="text" className="form-control" id="userState" placeholder="Enter state" />
-        </div>
-
-        <div className="mb-3">
-          <label htmlFor="votingDistrict" className="form-label">
-            Voting District: {userVD}
-          </label>
-          <input type="text" className="form-control" id="votingDistrict" placeholder="Enter voting district" />
-        </div>
-
-        <button type="submit" className="btn btn-primary">
-          Save Changes
-        </button>
-      </form>
-    </div>
+    <Card>
+      <Card.Body>
+        <h2 className="text-center mb-4">Profile</h2>
+        <Form onSubmit = {onSubmit}>
+            <Form.Group id="email">
+              <Form.Label>Current Email: {userEmail} </Form.Label>
+              <Form.Control type="email" readonly class="form-control-plaintext" ref={emailRef} required />
+            </Form.Group>
+  
+          <Form.Group id="state">
+            <Form.Label htmlFor="state">Current State: {userState} </Form.Label>
+            <Form.Control as="select" ref={stateRef} required>
+              <option value="AL">Alabama</option>
+              <option value="AK">Alaska</option>
+              <option value="AZ">Arizona</option>
+              <option value="AR">Arkansas</option>
+              <option value="CA">California</option>
+              <option value="CO">Colorado</option>
+              <option value="CT">Connecticut</option>
+              <option value="DE">Delaware</option>
+              <option value="FL">Florida</option>
+              <option value="GA">Georgia</option>
+              <option value="GU">Guam</option>
+              <option value="HI">Hawaii</option>
+              <option value="ID">Idaho</option>
+              <option value="IL">Illinois</option>
+              <option value="IN">Indiana</option>
+              <option value="IA">Iowa</option>
+              <option value="KS">Kansas</option>
+              <option value="KY">Kentucky</option>
+              <option value="LA">Louisiana</option>
+              <option value="ME">Maine</option>
+              <option value="MD">Maryland</option>
+              <option value="MA">Massachusetts</option>
+              <option value="MI">Michigan</option>
+              <option value="MN">Minnesota</option>
+              <option value="MS">Mississippi</option>
+              <option value="MO">Missouri</option>
+              <option value="MT">Montana</option>
+              <option value="NE">Nebraska</option>
+              <option value="NV">Nevada</option>
+              <option value="NH">New Hampshire</option>
+              <option value="NJ">New Jersey</option>
+              <option value="NM">New Mexico</option>
+              <option value="NY">New York</option>
+              <option value="NC">North Carolina</option>
+              <option value="ND">North Dakota</option>
+              <option value="OH">Ohio</option>
+              <option value="OK">Oklahoma</option>
+              <option value="OR">Oregon</option>
+              <option value="PA">Pennsylvania</option>
+              <option value="RI">Rhode Island</option>
+              <option value="SC">South Carolina</option>
+              <option value="SD">South Dakota</option>
+              <option value="TN">Tennessee</option>
+              <option value="TX">Texas</option>
+              <option value="UT">Utah</option>
+              <option value="VT">Vermont</option>
+              <option value="VA">Virginia</option>
+              <option value="WA">Washington</option>
+              <option value="WV">West Virginia</option>
+              <option value="WI">Wisconsin</option>
+              <option value="WY">Wyoming</option>
+            </Form.Control>
+          </Form.Group>
+  
+          <Form.Group id="votingDistrict">
+            <Form.Label>Current Voting District: {userVD} </Form.Label>
+            <Form.Control type="number" ref={vdRef} required />
+          </Form.Group>
+  
+          <Button className="w-100" type="submit">
+            Sign Up
+          </Button>
+        </Form>
+      </Card.Body>
+    </Card>
   );
 }
