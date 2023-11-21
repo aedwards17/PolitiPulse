@@ -85,7 +85,7 @@ export default function Home() {
                   {member.title === "Representative" ? (
                     <Link to={`/HouseMembers?houseMemberId=${member.id}`}>{member.first_name} {member.last_name}</Link>
                   ) : (
-                    <Link to={`/SenateMembers?senateId=${member.id}`}>{member.first_name} {member.last_name}</Link>
+                    <Link to={`/SenateMembers?senateMemberId=${member.id}`}>{member.first_name} {member.last_name}</Link>
                   )}
                   <span className="badge bg-secondary ml-2">{member.party}</span>
                 </ListGroup.Item>
