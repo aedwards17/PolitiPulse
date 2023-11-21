@@ -1,16 +1,20 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import { collection, query, where, getDocs, doc, getDoc, limit } from "firebase/firestore";
+import { collection, collectionGroup, query, where, getDocs, doc, getDoc, limit } from "firebase/firestore";
 import { db } from "../../firebase";
 import { Card } from "react-bootstrap";
 
-export default function SenateMembers() {
+export default function senateMembers() {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const senateMemberId = queryParams.get("senateMemberId");
 
   const [memberInfo, setMemberInfo] = useState({});
   const [recentBills, setRecentBills] = useState([]);
+  const [memberBio, setMemberBio] = useState("");
+  const [recentStatements, setRecentStatements] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
   var billId = "";
 
   useEffect(() => {
@@ -27,53 +31,49 @@ export default function SenateMembers() {
     };
 
     const fetchMemberVotes = async () => {
-      let allRecentBills = []; // Temporary array to accumulate positions
+      setIsLoading(true);
+      let allRecentBills = []; // Temporary array to accumulate votes
 
-      const votesSnapshot = await getDocs(query(collection(db, 'votes'), limit(110)));
+      // Fetch positions where the member's ID is present
+      const positionsSnapshot = await getDocs(query(collectionGroup(db, 'positions'), where('member_id', '==', senateMemberId), limit(10)));
 
-      const promises = votesSnapshot.docs.map(async (voteDoc) => {
-        const q = query(
-          collection(db, `votes/${voteDoc.id}/positions`),
-          where('__name__', '==', senateMemberId),
-        );
+      for (const positionDoc of positionsSnapshot.docs) {
+        const positionData = positionDoc.data();
+        const voteRef = positionDoc.ref.parent.parent; // Getting a reference to the parent 'votes' document
 
-        const positionsSnapshot = await getDocs(q);
+        if (voteRef) {
+          const voteSnapshot = await getDoc(voteRef);
+          if (voteSnapshot.exists()) {
+            const voteData = voteSnapshot.data();
 
-        if (!positionsSnapshot.empty) {
-          const voteDocRef = doc(db, 'votes', voteDoc.id);
-          const voteDocData = await getDoc(voteDocRef);
-
-          if (voteDocData.exists()) {
-            let bill_id = voteDocData.data().bill_id;
-            let question = voteDocData.data().question;
-
-            // Fetch the bill title from the "bills" collection
-            const billDocRef = doc(db, 'bills', bill_id);
-            const billDocData = await getDoc(billDocRef);
             let bill_title = "";
-            if (billDocData.exists()) {
-              bill_title = billDocData.data().bill_title
-            } else {
-              console.log('data does not exist')
+            if (voteData.bill_id) {
+              const billDocRef = doc(db, 'bills', voteData.bill_id);
+              const billDocData = await getDoc(billDocRef);
+              if (billDocData.exists()) {
+                bill_title = billDocData.data().bill_title;
+              }
             }
-            positionsSnapshot.forEach((positionDoc) => {
-              const position = {
-                "bill": bill_id,
-                "bill_title": bill_title, 
-                "roll_call": voteDoc.id,
-                "question": question,
-                "position": positionDoc.data().vote_position
-              };
-              allRecentBills.push(position); // Pushing each position to the temporary array
-            });
+
+            const billData = {
+              "bill": voteData.bill_id,
+              "bill_title": bill_title,
+              "roll_call": voteData.roll_call,
+              "question": voteData.question,
+              "position": positionData.vote_position
+            };
+
+            allRecentBills.push(billData);
           }
         }
-      });
+      }
 
-      await Promise.all(promises); // Wait for all promises to resolve
+      setRecentBills(allRecentBills); // Update the state with the accumulated data
+      setIsLoading(false);
+    };
 
-      setRecentBills(allRecentBills); // Setting the state once with all positions
-    }
+
+
 
     fetchMemberInfo();
     fetchMemberVotes();
@@ -86,7 +86,7 @@ export default function SenateMembers() {
         <div className="col-md-6">
           <h2 class="text-center">Member Info</h2>
           <Card className="bg-light">
-            <Card.Header>
+            <Card.Header className="border">
               <div style={{ position: 'relative' }}>
                 {/* Displaying the image at the top right corner */}
                 {memberInfo.imageUrl && (
@@ -105,12 +105,13 @@ export default function SenateMembers() {
               </div>
               <hr></hr>
               <h3>{memberInfo.first_name} {memberInfo.last_name}</h3>
-              <h4><strong>Senator</strong></h4> {/* Changed from Representative to Senator */}
+              <h4><strong>Representative</strong></h4>
               <br></br>
               <hr></hr>
             </Card.Header>
-            <Card.Body className="bg-white">
+            <Card.Body className="bg-white border">
               <p><strong>Congress: </strong>{memberInfo.congress}</p>
+              <p><strong>District: </strong>{memberInfo.district}</p>
               <p><strong>Date of Birth: </strong>{memberInfo.dob}</p>
               <p><strong>Facebook: </strong>{memberInfo.facebook_account}</p>
               <p><strong>Gender: </strong>{memberInfo.gender}</p>
@@ -127,10 +128,12 @@ export default function SenateMembers() {
         {/* Recent Bills Voted On Card */}
         <div className="col-md-6">
           <h2 className="text-center">Recent Bills Voted On</h2>
-          <Card className="bgwhite hover-overlay">
-            <Card.Body>
+          <Card className="bg-white hover-overlay text-center">
+            <Card.Body className="border">
               <div style={{ maxHeight: '607px', overflowY: 'auto' }}>
-                {recentBills.length > 0 ? (
+                {isLoading ? (
+                  <p>Loading... Please wait</p>
+                ) : recentBills.length > 0 ? (
                   recentBills.map((bill, index) => (
                     <a
                       key={index}
