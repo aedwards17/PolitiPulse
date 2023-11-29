@@ -32,7 +32,7 @@ const processXMLData = async (url) => {
 
 const simplifyBill = async () => {
   try {
-    const billIdsToUpdate = ['hr4365-118']; 
+    const billIdsToUpdate = ['hr5894-118']; 
 
     for (const billId of billIdsToUpdate) {
       const docRef = firestore.collection('bills').doc(billId);

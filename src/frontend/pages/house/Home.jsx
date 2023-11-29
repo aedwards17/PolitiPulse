@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useAuth } from '../../contexts/contexts';
 import { db } from "../../../firebase";
-import { collection, query, where, getDocs, doc, getDoc } from "firebase/firestore";
+import { collection, query, where, getDocs, doc, getDoc, limit } from "firebase/firestore";
 import { Link } from 'react-router-dom';
 import Card from 'react-bootstrap/Card';
 import ListGroup from 'react-bootstrap/ListGroup';
@@ -11,6 +11,7 @@ export default function Home() {
   const [congressMembers, setCongressMembers] = useState([]);
   const { currentUser } = useAuth();
   const [news, setNews] = useState([]);
+  const [statements, setStatements] = useState([]);
 
   useEffect(() => {
 
@@ -66,9 +67,49 @@ export default function Home() {
       }
     }
 
+
     fetchCongressMembers();
     fetchNews();  // Fetch news on component mount
   }, [currentUser]);
+
+  useEffect(() => {
+    async function fetchStatementsForMember(memberId) {
+      try {
+        console.log('Fetching statements for member ID:', memberId);
+        const statementsQuery = query(collection(db, 'statements'), where('member_id', '==', memberId), limit(2));
+        const snapshot = await getDocs(statementsQuery);
+        return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      } catch (error) {
+        console.error("Error fetching statements for member:", memberId, error);
+        return [];
+      }
+    }
+
+    async function fetchStatements() {
+      console.log('Fetching statements for congress members:', congressMembers);
+      if (congressMembers.length === 0) {
+        console.log('No congress members available to fetch statements for');
+        return;
+      }
+
+      try {
+        let allStatements = [];
+        for (const member of congressMembers) {
+          const memberStatements = await fetchStatementsForMember(member.id);
+          allStatements.push(...memberStatements);
+        }
+        console.log('All fetched statements:', allStatements);
+        setStatements(allStatements);
+      } catch (error) {
+        console.error("An error occurred while fetching statements:", error);
+      }
+    }
+
+    if (congressMembers.length > 0) {
+      fetchStatements();
+    }
+  }, [congressMembers]);
+  
 
   return (
     <div className="container mt-4">
@@ -92,36 +133,28 @@ export default function Home() {
               ))}
             </ListGroup>
           </Card>
-        </div>
 
-        {/* Top Right Card - Recent Bills */}
-        <div className="col-md-6 mb-4">
-          <Card>
-            <Card.Header><strong><h2>Recent Bills</h2></strong></Card.Header>
+          <Card className="mt-3">
+            <Card.Header><strong><h2>Recent Statements</h2></strong></Card.Header>
             <Card.Body>
               <ListGroup variant="flush">
-                {'Recent Bills related to user congress members will be placed here'}
+                {statements.map((statement, index) => (
+                  <ListGroup.Item key={index}>
+                    <strong>{statement.name}: </strong>
+                    <span className="badge bg-secondary ml-2">{statement.statement_type}</span><br />
+                    <a href={statement.url} target="_blank" rel="noopener noreferrer">{statement.title}</a>
+                  </ListGroup.Item>
+                ))}
               </ListGroup>
             </Card.Body>
           </Card>
+          
         </div>
 
-        {/* Bottom Left Card - Recent Statements */}
-        <div className="col-md-6 mb-4">
+        {/* Top Right Card - Related News */}
+        <div className="col-md-6 overflow-scroll border-bottom" style={{ height: "450px" }}>
           <Card>
-            <Card.Header><strong><h2>Recent Statements</h2></strong></Card.Header>
-            <Card.Body>
-              {<ListGroup variant="flush">
-                {'Recent Statements related to user congress members will be placed here'}
-              </ListGroup>}
-            </Card.Body>
-          </Card>
-        </div>
-
-        {/* Bottom Right Card - Related News */}
-        <div className="col-md-6 mb-4 overflow-scroll" style={{ height: "250px" }}>
-          <Card>
-            <Card.Header><strong><h2>Related News</h2></strong></Card.Header>
+            <Card.Header><strong><h2>Recent News</h2></strong></Card.Header>
             <Card.Body>
               <ListGroup variant="flush">
                 {news.map(({ id, date, title, shortDescription, url, source }) => (
