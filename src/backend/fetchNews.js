@@ -52,4 +52,15 @@ async function fetchAndPushNews() {
   }
 }
 
-fetchAndPushNews();
+// Define the main function to orchestrate the data fetching and storing process
+async function main() {
+  try {
+    await fetchAndPushNews();
+    console.log('News data fetched and stored successfully.');
+  } catch (error) {
+    console.error('Error in main function:', error.message);
+  }
+}
+
+// Call the main function to start the process
+main();

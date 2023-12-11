@@ -87,11 +87,18 @@ async function getBillUrl(bill_id, url) {
   }
 }
 
-// Call the main function to start the data fetching and storing process
-for (var i = 0; i < 100; i += 20) {
-  console.log(i);
-  fetchAndPushData(i);
+// Define the main function to orchestrate the data fetching and storing process
+async function main() {
+  for (let i = 0; i < 100; i += 20) {
+    console.log('Fetching data for offset:', i);
+    await fetchAndPushData(i);
+  }
+
+  // Retrieve and log the size of the bills collection
+  db.collection("bills").get().then(function(querySnapshot) {      
+    console.log('Number of bills in the collection:', querySnapshot.size); 
+  });
 }
-db.collection("bills").get().then(function(querySnapshot) {      
-    console.log(querySnapshot.size); 
-});
+
+// Call the main function to start the process
+main();

@@ -23,7 +23,7 @@ const apiUrl = 'https://api.congress.gov/v3/member';
 async function fetchAndPushImage() {
   try {
     // Get a reference to the "house" collection in Firestore
-    const houseCollection = db.collection('senate');
+    const houseCollection = db.collection('house');
 
     // Get all documents from the "house" collection
     const houseSnapshot = await houseCollection.get();
@@ -49,4 +49,15 @@ async function fetchAndPushImage() {
   }
 }
 
-fetchAndPushImage();
+// Define the main function to orchestrate the image fetching and updating process
+async function main() {
+  try {
+    await fetchAndPushImage();
+    console.log('Congress member image data fetched and updated successfully.');
+  } catch (error) {
+    console.error('Error in main function:', error.message);
+  }
+}
+
+// Call the main function to start the process
+main();

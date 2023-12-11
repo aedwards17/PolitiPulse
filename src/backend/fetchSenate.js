@@ -20,14 +20,15 @@ const apiKey = process.env['API_KEY'];
 const apiUrl = 'https://api.propublica.org/congress/v1';
 
 // Define parameters for the ProPublica API request
-const congress = 118;
-const chamber = 'house'; // 'senate' or 'house'
+const congress = 118; // 105-117
+const chamber = 'senate'; // senate or house
 
 // Define an asynchronous function to fetch and push data to Firestore
 
 async function fetchAndPushData() {
   try {
-    // Make an HTTP request to the ProPublica API to fetch member data
+    // Make an HTTP request to the ProPublica API to fetch bill data
+    // ?offset=value can be added to the end of the URL to page through the results
     const response = await axios.get(`${apiUrl}/${congress}/${chamber}/members.json`, {
       headers: {
         'X-API-Key': apiKey,
@@ -35,21 +36,19 @@ async function fetchAndPushData() {
     });
 
     const data = response.data;
-
     if (data.results) {
       const members = data.results[0].members;
 
-      // Loop through the fetched members and store them in Firestore
+      // Loop through the fetched bills and store them in Firestore
       for (const member of members) {
         // Get a reference to the Firestore document and set its data
-        const docRef = db.collection(chamber).doc(member.id);
+        const docRef = db.collection('senate').doc(member.id);
         await docRef.set({
           last_name: member.last_name,
           first_name: member.first_name,
           title: member.title,
           congress: data.results[0].congress,
           state: member.state,
-          district: member.district,
           party: member.party,
           dob: member.date_of_birth,
           gender: member.gender,
@@ -57,15 +56,27 @@ async function fetchAndPushData() {
           facebook_account: member.facebook_account,
           youtube_account: member.youtube_account,
           website: member.url,
-          next_election: member.next_election
+          contact: member.contact_form,
+
         }, {merge: true});
       }
     } else {
       console.log('No results found for the query.');
     }
   } catch (error) {
-    console.error('Error fetching and pushing data:', error.message);
+    console.error('Error fetching data:', error.message);
   }
 }
 
-fetchAndPushData();
+// Define the main function to orchestrate the data fetching and storing process
+async function main() {
+  try {
+    await fetchAndPushData();
+    console.log('Senate member data fetching and storing completed.');
+  } catch (error) {
+    console.error('Error in main function:', error.message);
+  }
+}
+
+// Call the main function to start the process
+main();

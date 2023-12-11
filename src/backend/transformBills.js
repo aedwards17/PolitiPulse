@@ -16,59 +16,34 @@ admin.initializeApp({
 
 const firestore = admin.firestore(); 
 
-// Function to fetch and process XML data
+// Function to fetch and process XML data from a given URL
 const processXMLData = async (url) => {
   try {
     const response = await axios.get(url);
     const xml = response.data;
     const parsedXML = await xml2js.parseStringPromise(xml);
-    const textToProcess = JSON.stringify(parsedXML);
-    return textToProcess;
+    return JSON.stringify(parsedXML);
   } catch (error) {
     console.error("Error fetching or processing XML data:", error);
     return null;
   }
 };
 
+// Function to simplify bill text using OpenAI
 const simplifyBill = async () => {
   try {
-    const billIdsToUpdate = ['hr5894-118']; 
+    const billIdsToUpdate = ['hr5894-118']; // List of bill IDs to update
 
     for (const billId of billIdsToUpdate) {
       const docRef = firestore.collection('bills').doc(billId);
       const doc = await docRef.get();
 
-      if (doc.exists) {
+      if (doc.exists && !doc.data().bill_simplified) {
         const data = doc.data();
-        if (data.bill_url && !data.bill_simplified) {
+        if (data.bill_url) {
           const textToProcess = await processXMLData(data.bill_url);
-          if (textToProcess) {
-            // Split the text into chunks
-            const MAX_CHAR = 4096 * 3.8; 
-            const chunks = splitIntoChunks(textToProcess, MAX_CHAR);
-            // Array to hold simplified text chunks
-            const simplifiedTextChunks = [];
 
-            for (const chunk of chunks) {
-              const response = await openai.chat.completions.create({
-                model: 'gpt-3.5-turbo',
-                messages: [
-                  {
-                    role: 'system',
-                    content: 'Simplify this bill and remove jargon. Make it very digestible.'
-                  },
-                  {
-                    role: 'user',
-                    content: chunk,
-                  },
-                ],
-              });
-              simplifiedTextChunks.push(response.choices[0].message.content);
-            }
-
-            // Combine the simplified text chunks back into a single string
-            const simplifiedText = simplifiedTextChunks.join(' ');
-
+          if (textToProcess && textToProcess.length <= 15000) { // Check if text length is within limit
             const response = await openai.chat.completions.create({
               model: 'gpt-3.5-turbo',
               messages: [
@@ -78,24 +53,22 @@ const simplifyBill = async () => {
                 },
                 {
                   role: 'user',
-                  content: simplifiedText,
+                  content: textToProcess,
                 },
               ],
             });
 
-            // Update the bill document with the new simplified text
-            console.log(response.choices[0].message.content);
-            await docRef.update({
-              bill_simplified: response.choices[0].message.content
-            });
-
+            // Update the Firestore document with the simplified text
+            await docRef.update({ bill_simplified: response.choices[0].message.content });
             console.log(`Bill ${billId} updated with simplified text.`);
+          } else {
+            console.log(`Bill ${billId} text is too long for simplification.`);
           }
         } else {
-          console.log(`Bill ${billId} already has simplified text or does not need updating.`);
+          console.log(`Bill ${billId} has no URL to process.`);
         }
       } else {
-        console.log(`Bill ${billId} does not exist in the database.`);
+        console.log(`Bill ${billId} does not exist or already has simplified text.`);
       }
     }
   } catch (error) {
@@ -103,27 +76,10 @@ const simplifyBill = async () => {
   }
 };
 
-// Helper function to split text into chunks with a maximum size
-function splitIntoChunks(text, maxChars) {
-  const words = text.split(' ');
-  const chunks = [];
-  let currentChunk = '';
+// Main function to orchestrate the bill simplification process
+const main = async () => {
+  await simplifyBill();
+};
 
-  words.forEach(word => {
-    if ((currentChunk + ' ' + word).length > maxChars) {
-      chunks.push(currentChunk);
-      currentChunk = word;
-    } else {
-      currentChunk += ' ' + word;
-    }
-  });
-
-  // Push the last chunk
-  if (currentChunk.length > 0) {
-    chunks.push(currentChunk);
-  }
-
-  return chunks;
-}
-
-simplifyBill();
+// Start the script
+main();

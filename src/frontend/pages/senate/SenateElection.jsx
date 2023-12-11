@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom'; // Import Link for routing
 
 import avatarImage from '../../img/avatar.png'; // Import the image
 
-export default function SenateCurrentElected() {
+export default function SenateElection() {
   // State variables to store data and manage pagination
   const [senate, setSenate] = useState([]); // Represents the list of Senate candidates
   const [page, setPage] = useState(1); // Current page number

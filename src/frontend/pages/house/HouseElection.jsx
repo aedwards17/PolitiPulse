@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom'; // Import Link for routing
 
 import avatarImage from '../../img/avatar.png'; // Import the image
 
-export default function HouseCurrentElected() {
+export default function HouseElection() {
   // State variables to store data and manage pagination
   const [house, setHouse] = useState([]); // Represents the list of House representatives
   const [page, setPage] = useState(1); // Current page number
@@ -63,7 +63,7 @@ export default function HouseCurrentElected() {
       <div className="row">
         {paginatedHouse.map((house) => (
           <div key={house.id} className={`col-md-4 mb-4`}>
-            <Link to={`/HouseMembers?houseId=${house.id}`} style={{ textDecoration: 'none', color: 'black' }}>
+            <Link to={`/HouseMembers?houseMemberId=${house.id}`} style={{ textDecoration: 'none', color: 'black' }}>
                 <Card>
                 <div className="d-flex justify-content-center" style={{ background: house.party === "D" ? "DarkBlue" : house.party === "R" ? "DarkRed" : "black" }}>
                   <Card.Img src={house.imageUrl} alt="Avatar" className="avatar" style={{ width: "20%" }} />
