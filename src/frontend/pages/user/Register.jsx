@@ -1,17 +1,18 @@
-import React, {useRef} from 'react'
-import { Card, Form, Button, Container} from 'react-bootstrap'
+import React, { useRef } from 'react'
+import states from '../../contexts/states.jsx'
+import { Card, Form, Button, Container } from 'react-bootstrap'
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import { useNavigate } from 'react-router-dom';
 import { setDoc, doc } from "firebase/firestore";
 import { db } from "../../../firebase";
 
-export default function Signup(){
+export default function Signup() {
   return (
-    <Container 
-      className = "d-flex align-items-center justify-content-center" 
-      style={{minHeight:"100vh"}}
+    <Container
+      className="d-flex align-items-center justify-content-center"
+      style={{ minHeight: "100vh" }}
     >
-      <div className="w-100" style={{maxWidth:"400px"}}>
+      <div className="w-100" style={{ maxWidth: "400px" }}>
         <SignupComp />
       </div>
     </Container>
@@ -35,10 +36,10 @@ function SignupComp() {
   const passwordConfirmRef = useRef()
   const navigate = useNavigate()
   const auth = getAuth()
-  
-  
+
+
   function onSubmit(e) {
-    e.preventDefault(); 
+    e.preventDefault();
 
     if (passwordRef.current.value !== passwordConfirmRef.current.value) {
       console.error("Passwords do not match");
@@ -46,21 +47,21 @@ function SignupComp() {
     }
 
     createUserWithEmailAndPassword(
-      auth, 
-      emailRef.current.value, 
+      auth,
+      emailRef.current.value,
       passwordRef.current.value,
     )
-    .then((userCredential) => {
-      const user = userCredential.user;
-      console.log(user);
-      writeUserData(user.uid, emailRef.current.value, stateRef.current.value, vdRef.current.value)
-      navigate("/UserProfile");
-    })
-    .catch((error) => {
-      const errorCode = error.code;
-      const errorMessage = error.message;
-      console.error(errorCode, errorMessage);
-    });
+      .then((userCredential) => {
+        const user = userCredential.user;
+        console.log(user);
+        writeUserData(user.uid, emailRef.current.value, stateRef.current.value, vdRef.current.value)
+        navigate("/UserProfile");
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        console.error(errorCode, errorMessage);
+      });
   }
   return (
     <>
@@ -83,57 +84,9 @@ function SignupComp() {
             <Form.Group id="state">
               <Form.Label htmlFor="state">State</Form.Label>
               <Form.Control as="select" ref={stateRef} required>
-                <option value="AL">Alabama</option>
-                <option value="AK">Alaska</option>
-                <option value="AZ">Arizona</option>
-                <option value="AR">Arkansas</option>
-                <option value="CA">California</option>
-                <option value="CO">Colorado</option>
-                <option value="CT">Connecticut</option>
-                <option value="DE">Delaware</option>
-                <option value="FL">Florida</option>
-                <option value="GA">Georgia</option>
-                <option value="GU">Guam</option>
-                <option value="HI">Hawaii</option>
-                <option value="ID">Idaho</option>
-                <option value="IL">Illinois</option>
-                <option value="IN">Indiana</option>
-                <option value="IA">Iowa</option>
-                <option value="KS">Kansas</option>
-                <option value="KY">Kentucky</option>
-                <option value="LA">Louisiana</option>
-                <option value="ME">Maine</option>
-                <option value="MD">Maryland</option>
-                <option value="MA">Massachusetts</option>
-                <option value="MI">Michigan</option>
-                <option value="MN">Minnesota</option>
-                <option value="MS">Mississippi</option>
-                <option value="MO">Missouri</option>
-                <option value="MT">Montana</option>
-                <option value="NE">Nebraska</option>
-                <option value="NV">Nevada</option>
-                <option value="NH">New Hampshire</option>
-                <option value="NJ">New Jersey</option>
-                <option value="NM">New Mexico</option>
-                <option value="NY">New York</option>
-                <option value="NC">North Carolina</option>
-                <option value="ND">North Dakota</option>
-                <option value="OH">Ohio</option>
-                <option value="OK">Oklahoma</option>
-                <option value="OR">Oregon</option>
-                <option value="PA">Pennsylvania</option>
-                <option value="RI">Rhode Island</option>
-                <option value="SC">South Carolina</option>
-                <option value="SD">South Dakota</option>
-                <option value="TN">Tennessee</option>
-                <option value="TX">Texas</option>
-                <option value="UT">Utah</option>
-                <option value="VT">Vermont</option>
-                <option value="VA">Virginia</option>
-                <option value="WA">Washington</option>
-                <option value="WV">West Virginia</option>
-                <option value="WI">Wisconsin</option>
-                <option value="WY">Wyoming</option>
+                {states.map((state, index) => (
+                  <option key={index} value={state.value}>{state.name}</option>
+                ))}
               </Form.Control>
             </Form.Group>
             <Form.Group id="voting-dis">

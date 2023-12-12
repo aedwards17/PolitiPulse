@@ -12,16 +12,15 @@ PolitiPulse is an online platform aimed at enhancing political awareness by prov
 - **Other Tools**: Replit, various APIs
 
 ## Repository Structure
-- **src/**: Source files for the application.
-- **public/**: Static assets for the frontend.
+- **src/**: Source files for the application. Also contains static assets for the frontend (App.jsx, firebase.jsx, index.jsx)
 
 ### frontend
-- **components/**: React components (e.g., NavBar, BillDetails).
-- **contexts/**: React contexts for global state (e.g., AuthContext).
-- **pages/**: Individual pages (e.g., Home, SenateMembers).
+- **src/frontend/components/**: React components (e.g., NavBar, BillDetails).
+- **src/frontend/contexts/**: React contexts for global state (e.g., AuthContext). Also contains the array of objects for states.
+- **src/frontend/pages/**: Individual pages (e.g., Home, SenateMembers).
 
 ### backend
-- **/**: Backend scripts for data fetching and processing.
+- **src/backend/**: Backend scripts for data fetching and processing.
 
 ## How to Build and Deploy
 
@@ -49,8 +48,26 @@ PolitiPulse is an online platform aimed at enhancing political awareness by prov
 ## Running the Application
 - Back in the main repl, hosting our cloned files, use the 'Run' button on Replit to start your application.
 - Test the application to ensure it connects to Firebase and operates as expected.
-- Deploying the Application
-- Replit provides a live URL for web applications. You can share this URL for user access.
+- 
+## Deploying the Application
+
+### Setting Up Your Repl:
+- First, ensure your Repl is working correctly using the "Run" button.
+- If your project requires building into static files (like for a web project), execute the necessary build command (e.g., npm run build) and ensure the output directory (like dist) is correct.
+
+### Creating a Deployment:
+- Open the Deployments tab either by clicking the "Deploy" button at the top right of the workspace or by opening a new pane and typing "Deployments".
+
+### Configuring Your Deployment:
+- Configure the build command and specify the public directory. This is where your static files are built to. For example, if your static files are in the dist directory, specify that.
+- Set up 'Index' and 'Not Found' pages. Your index.html in the public directory will serve as the home page. You can also provide a custom 'Not Found' page with a 404.html file in the same directory.
+
+### Starting Your Deployment:
+- After configuration, click "Deploy" to start the deployment process. Once complete, you will get details like the URL and build logs.
+
+### Billing Considerations:
+- For Replit Core (previously Hacker or Pro) subscribers, static deployments are free with up to 100 static deployments included.
+- Users on the free plan need to add a credit card for creating a Static Deployment. There's a 10 GiB limit on outbound storage transfer, with charges applicable for additional usage.
 
 ## Additional Notes
 - Always ensure your Firebase rules are set correctly to prevent unauthorized access.

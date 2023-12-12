@@ -23,7 +23,7 @@ export default function Home() {
 
         if (!currentUser) {
           console.log("User is not logged in, picking random state and district");
-          state = states[Math.floor(Math.random() * states.length)];
+          state = states[Math.floor(Math.random() * states.length)].value;
           district = getRandomDistrict();
         } else {
           const userRef = doc(db, 'users', currentUser.uid);
