@@ -7,6 +7,7 @@ import { collection, query, where, getDocs, doc, getDoc, limit } from "firebase/
 import { Link } from 'react-router-dom';
 import Card from 'react-bootstrap/Card';
 import ListGroup from 'react-bootstrap/ListGroup';
+import logo from '../../../../public/pulse.png'
 
 export default function Home() {
   const [congressMembers, setCongressMembers] = useState([]);
@@ -129,7 +130,8 @@ export default function Home() {
 
   return (
     <div className="container mt-4">
-      <h1 className="text-center mb-4">Home</h1>
+      <h1 className="text-center mb-4"><img src={logo} width="170" height="170" className="d-inline-block align-top" alt="PolitiPulse Logo"
+      /></h1>
       <div className="row">
         {/* Congress Members Card */}
         <div className="col-md-6 mb-4">
