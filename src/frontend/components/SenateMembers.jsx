@@ -105,13 +105,12 @@ export default function senateMembers() {
               </div>
               <hr></hr>
               <h3>{memberInfo.first_name} {memberInfo.last_name}</h3>
-              <h4><strong>Representative</strong></h4>
+              <h4><strong>Senator</strong></h4>
               <br></br>
               <hr></hr>
             </Card.Header>
             <Card.Body className="bg-white border">
               <p><strong>Congress: </strong>{memberInfo.congress}</p>
-              <p><strong>District: </strong>{memberInfo.district}</p>
               <p><strong>Date of Birth: </strong>{memberInfo.dob}</p>
               <p><strong>Facebook: </strong>{memberInfo.facebook_account}</p>
               <p><strong>Gender: </strong>{memberInfo.gender}</p>
@@ -134,7 +133,7 @@ export default function senateMembers() {
                 {isLoading ? (
                   <p>Loading... Please wait</p>
                 ) : recentBills.length > 0 ? (
-                  recentBills.map((bill, index) => (
+                  recentBills.filter(bill => !!bill.bill_title).map((bill, index) => ( // Filter out bills with null title
                     <a
                       key={index}
                       href={`/BillPages?billId=${bill.bill}`}
@@ -155,6 +154,7 @@ export default function senateMembers() {
             </Card.Body>
           </Card>
         </div>
+
       </div>
     </div>
   );

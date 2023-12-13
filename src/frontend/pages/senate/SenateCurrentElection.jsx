@@ -4,14 +4,17 @@ import { db } from '../../../firebase';
 import { Card, Button } from "react-bootstrap";
 import { Link } from 'react-router-dom';
 
+import avatarImage from '../../img/avatar.png'; // Import the image
+
+
 export default function SenateCurrentElected() {
   const [senate, setSenate] = useState([]);
-  const [page, setPage] = useState(1);
-  const [perPage] = useState(5);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [perPage] = useState(6);
 
   const fetchsenates = async () => {
     try {
-      const q = query(collection(db, "senate"), where("congress", "==", "118"), limit(5));
+      const q = query(collection(db, "senate"), where("congress", "==", "118"));
       const querySnapshot = await getDocs(q);
       const newData = querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
       setSenate(newData);
@@ -24,21 +27,19 @@ export default function SenateCurrentElected() {
     fetchsenates();
   }, []);
 
-  const startIndex = (page - 1) * perPage;
+  const startIndex = (currentPage - 1) * perPage;
   const endIndex = startIndex + perPage;
   const paginatedSenate = senate.slice(startIndex, endIndex);
 
   const totalResults = senate.length;
-  const currentPageRange = `${startIndex + 1} - ${Math.min(endIndex, totalResults)}`;
+  const totalPage = Math.ceil(totalResults / perPage);
 
   const nextPage = () => {
-    setPage(page + 1);
+    setCurrentPage((prevCurrentPage) => Math.min(prevCurrentPage + 1, totalPage));
   };
 
   const prevPage = () => {
-    if (page > 1) {
-      setPage(page - 1);
-    }
+    setCurrentPage((prevCurrentPage) => Math.max(prevCurrentPage - 1, 1));
   };
 
   return (
@@ -51,7 +52,7 @@ export default function SenateCurrentElected() {
             <Link to={`/SenateMembers?senateMemberId=${senate.id}`} style={{ textDecoration: 'none', color: 'black' }}>
               <Card>
                 <div className="d-flex justify-content-center" style={{ background: senate.party === "D" ? "DarkBlue" : senate.party === "R" ? "DarkRed" : "black" }}>
-                  <Card.Img src={senate.imageUrl} alt="Avatar" className="avatar" style={{ width: "20%" }} />
+                  <Card.Img src={senate.imageUrl || avatarImage} alt="Avatar" className="avatar" style={{ width: "20%" }} />
                 </div>
                 <Card.Body>
                   <Card.Title>Last name: {senate.last_name}</Card.Title>
@@ -66,11 +67,11 @@ export default function SenateCurrentElected() {
         ))}
       </div>
       <div className="pagination d-flex justify-content-center mt-3">
-        <Button onClick={prevPage} disabled={page === 1} className="btn btn-outline-primary mx-5">Previous</Button>
-        <Button onClick={nextPage} disabled={endIndex >= totalResults} className="btn btn-outline-primary mx-5" >Next</Button>
+        <Button onClick={prevPage} disabled={currentPage === 1} className="me-5 bg-light text-dark" >Previous</Button>
+        <Button onClick={nextPage} disabled={currentPage >= totalPage} className="bg-light text-dark">Next</Button>
       </div>
       <div className="results-info text-center">
-        Showing {currentPageRange} of {totalResults} results
+        Showing {startIndex + 1} to {Math.min(endIndex, totalResults)} of {totalResults} results
       </div>
     </div>
   );

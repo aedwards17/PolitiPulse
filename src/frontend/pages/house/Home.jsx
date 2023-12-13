@@ -32,7 +32,7 @@ export default function Home() {
           state = userData.state;
           district = userData.district;
         }
-    if (state || district) {
+        if (state || district) {
           console.log(`Fetching members for state: ${state}, district: ${district}`);
           const members = [];
 
@@ -54,7 +54,7 @@ export default function Home() {
           if (!houseSnapshot.empty) {
             houseSnapshot.forEach((docSnap) => {
               members.push({ id: docSnap.id, ...docSnap.data() });
-          });
+            });
           } else {
             console.log('No house members found for the selected state and district');
           }
@@ -85,96 +85,95 @@ export default function Home() {
 
 
     fetchCongressMembers();
-  fetchNews();  // Fetch news on component mount
-}, [currentUser]);
+    fetchNews();  // Fetch news on component mount
+  }, [currentUser]);
 
-useEffect(() => {
-  async function fetchStatementsForMember(memberId) {
-    try {
-      console.log('Fetching statements for member ID:', memberId);
-      const statementsQuery = query(collection(db, 'statements'), where('member_id', '==', memberId), limit(2));
-      const snapshot = await getDocs(statementsQuery);
-      return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    } catch (error) {
-      console.error("Error fetching statements for member:", memberId, error);
-      return [];
-    }
-  }
-
-  async function fetchStatements() {
-    console.log('Fetching statements for congress members:', congressMembers);
-    if (congressMembers.length === 0) {
-      console.log('No congress members available to fetch statements for');
-      return;
-    }
-
-    try {
-      let allStatements = [];
-      for (const member of congressMembers) {
-        const memberStatements = await fetchStatementsForMember(member.id);
-        allStatements.push(...memberStatements);
+  useEffect(() => {
+    async function fetchStatementsForMember(memberId) {
+      try {
+        console.log('Fetching statements for member ID:', memberId);
+        const statementsQuery = query(collection(db, 'statements'), where('member_id', '==', memberId), limit(2));
+        const snapshot = await getDocs(statementsQuery);
+        return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      } catch (error) {
+        console.error("Error fetching statements for member:", memberId, error);
+        return [];
       }
-      console.log('All fetched statements:', allStatements);
-      setStatements(allStatements);
-    } catch (error) {
-      console.error("An error occurred while fetching statements:", error);
     }
-  }
 
-  if (congressMembers.length > 0) {
-    fetchStatements();
-  }
-}, [congressMembers]);
+    async function fetchStatements() {
+      console.log('Fetching statements for congress members:', congressMembers);
+      if (congressMembers.length === 0) {
+        console.log('No congress members available to fetch statements for');
+        return;
+      }
+
+      try {
+        let allStatements = [];
+        for (const member of congressMembers) {
+          const memberStatements = await fetchStatementsForMember(member.id);
+          allStatements.push(...memberStatements);
+        }
+        console.log('All fetched statements:', allStatements);
+        setStatements(allStatements);
+      } catch (error) {
+        console.error("An error occurred while fetching statements:", error);
+      }
+    }
+
+    if (congressMembers.length > 0) {
+      fetchStatements();
+    }
+  }, [congressMembers]);
 
 
-return (
-  <div className="container mt-4">
-    <h1 className="text-center mb-4">Home</h1>
-    <div className="row">
-      {/* Congress Members Card */}
-      <div className="col-md-6 mb-4">
-        <Card>
-          <Card.Header><strong><h2>Your Congress Members</h2></strong></Card.Header>
-          <ListGroup variant="flush">
-            {congressMembers.map(member => (
-              <ListGroup.Item key={member.id}>
-                <strong>{member.title}: </strong>
-                {member.title === "Representative" ? (
-                  <Link to={`/HouseMembers?houseMemberId=${member.id}`}>{member.first_name} {member.last_name}</Link>
-                ) : (
-                  <Link to={`/SenateMembers?senateMemberId=${member.id}`}>{member.first_name} {member.last_name}</Link>
-                )}
-                <span className="badge bg-secondary ml-2">{member.party}</span>
-              </ListGroup.Item>
-            ))}
-          </ListGroup>
-        </Card>
-
-        <Card className="mt-3">
-          <Card.Header><strong><h2>Recent Statements</h2></strong></Card.Header>
-          <Card.Body>
+  return (
+    <div className="container mt-4">
+      <h1 className="text-center mb-4">Home</h1>
+      <div className="row">
+        {/* Congress Members Card */}
+        <div className="col-md-6 mb-4">
+          <Card>
+            <Card.Header><strong><h2>Your Congress Members</h2></strong></Card.Header>
             <ListGroup variant="flush">
-              {statements.map((statement, index) => (
-                <ListGroup.Item key={index}>
-                  <strong>{statement.name}: </strong>
-                  <span className="badge bg-secondary ml-2">{statement.statement_type}</span>{statement.date}<br />
-                  <a href={statement.url} target="_blank" rel="noopener noreferrer">{statement.title}</a>
+              {congressMembers.map(member => (
+                <ListGroup.Item key={member.id}>
+                  <strong>{member.title}: </strong>
+                  {member.title === "Representative" ? (
+                    <Link to={`/HouseMembers?houseMemberId=${member.id}`}>{member.first_name} {member.last_name}</Link>
+                  ) : (
+                    <Link to={`/SenateMembers?senateMemberId=${member.id}`}>{member.first_name} {member.last_name}</Link>
+                  )}
+                  <span className="badge bg-secondary ml-2">{member.party}</span>
                 </ListGroup.Item>
               ))}
             </ListGroup>
-          </Card.Body>
-        </Card>
+          </Card>
 
-      </div>
+          <Card className="mt-3">
+            <Card.Header><strong><h2>Recent Statements</h2></strong></Card.Header>
+            <Card.Body>
+              <ListGroup variant="flush">
+                {statements.map((statement, index) => (
+                  <ListGroup.Item key={index}>
+                    <strong>{statement.name}: </strong>
+                    <span className="badge bg-secondary ml-2">{statement.statement_type}</span>{statement.date}<br />
+                    <a href={statement.url} target="_blank" rel="noopener noreferrer">{statement.title}</a>
+                  </ListGroup.Item>
+                ))}
+              </ListGroup>
+            </Card.Body>
+          </Card>
 
-      {/* Top Right Card - Related News */}
-      <div className="col-md-6 overflow-scroll border-bottom" style={{ height: "450px" }}>
-        <Card>
-          <Card.Header><strong><h2>Recent News</h2></strong></Card.Header>
-          <Card.Body>
-            <ListGroup variant="flush">
-              {news.map(({ id, date, title, shortDescription, url, source }) => (
-                <ListGroup.Item key={id}>
+        </div>
+
+        {/* Top Right Card - Related News */}
+        <div className="col-md-6 overflow-scroll border-bottom" style={{ height: "450px" }}>
+          <Card>
+            <Card.Header><strong><h2>Recent News</h2></strong></Card.Header>
+            <Card.Body>
+              <ListGroup variant="flush">
+                {news.sort((a, b) => new Date(b.date) - new Date(a.date)).map(({ id, date, title, shortDescription, url, source }) => (<ListGroup.Item key={id}>
                   <h5>{title}</h5>
                   <p>{shortDescription}</p>
                   <small>{new Date(date).toLocaleDateString()}</small>
@@ -182,12 +181,12 @@ return (
                   <a href={url} target="_blank" rel="noopener noreferrer">{url}</a><br />
                   <small>Source: {source}</small>
                 </ListGroup.Item>
-              ))}
-            </ListGroup>
-          </Card.Body>
-        </Card>
+                ))}
+              </ListGroup>
+            </Card.Body>
+          </Card>
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
 }

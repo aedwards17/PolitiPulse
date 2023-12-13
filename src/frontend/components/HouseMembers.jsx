@@ -134,7 +134,7 @@ export default function HouseMembers() {
                 {isLoading ? (
                   <p>Loading... Please wait</p>
                 ) : recentBills.length > 0 ? (
-                  recentBills.map((bill, index) => (
+                  recentBills.filter(bill => bill.bill_title !== null).map((bill, index) => ( // Filter out bills with null title
                     <a
                       key={index}
                       href={`/BillPages?billId=${bill.bill}`}

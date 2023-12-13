@@ -4,6 +4,8 @@ import { db } from '../../../firebase';
 import { Card, Button } from "react-bootstrap";
 import { Link } from 'react-router-dom'; // Import Link for routing
 
+import avatarImage from '../../img/avatar.png'; // Import the image
+
 export default function HouseCurrentElected() {
   const [house, setHouse] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -11,7 +13,7 @@ export default function HouseCurrentElected() {
 
   const fetchPost = async () => {
     try {
-      const q = query(collection(db, "house"), where("congress", "==", "118"), limit(25)); // Fetch more data to simulate pagination
+      const q = query(collection(db, "house"), where("congress", "==", "118")); // Fetch more data to simulate pagination
       const querySnapshot = await getDocs(q);
       const newData = querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
       setHouse(newData);
