@@ -42,11 +42,6 @@ export default function NavBar() {
               </NavDropdown.Item>
             </NavDropdown>
             <NavDropdown title="User" id="collapsible-nav-dropdown">
-              <NavDropdown.Item>
-                <Clink to="/About">
-                  About
-                </Clink>
-              </NavDropdown.Item>
               {!currentUser && (
                 <>
                   <NavDropdown.Item>

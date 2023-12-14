@@ -3,6 +3,7 @@ import {Button, Card, Form} from "react-bootstrap"
 import { getAuth, onAuthStateChanged} from "firebase/auth";
 import { updateDoc, doc, getDoc } from "firebase/firestore";
 import { db } from '../../../firebase';
+import { useNavigate } from 'react-router-dom';
 
 async function updateFireStore(userID, state, vd) {
   try {
@@ -29,7 +30,8 @@ export default function Profile() {
   const emailRef = useRef(null);
   const stateRef = useRef(null);
   const vdRef = useRef(null);
-  
+  const navigate = useNavigate();
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
@@ -63,6 +65,7 @@ export default function Profile() {
     e.preventDefault(); 
 
    updateFireStore(auth.currentUser.uid, stateRef.current.value, vdRef.current.value);
+   navigate("/");
   }
   
   return (
@@ -72,7 +75,6 @@ export default function Profile() {
         <Form onSubmit = {onSubmit}>
             <Form.Group id="email">
               <Form.Label>Current Email: {userEmail} </Form.Label>
-              <Form.Control type="email" readonly class="form-control-plaintext" ref={emailRef} required />
             </Form.Group>
   
           <Form.Group id="state">
@@ -88,7 +90,6 @@ export default function Profile() {
               <option value="DE">Delaware</option>
               <option value="FL">Florida</option>
               <option value="GA">Georgia</option>
-              <option value="GU">Guam</option>
               <option value="HI">Hawaii</option>
               <option value="ID">Idaho</option>
               <option value="IL">Illinois</option>
@@ -138,7 +139,7 @@ export default function Profile() {
           </Form.Group>
   
           <Button className="w-100" type="submit">
-            Sign Up
+            Update
           </Button>
         </Form>
       </Card.Body>
